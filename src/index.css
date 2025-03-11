@@ -13,6 +13,7 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+<<<<<<< HEAD
 a {
   font-weight: 500;
   color: #646cff;
@@ -65,4 +66,9 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
+=======
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+>>>>>>> 883626deacc10ec4d05abc748a57942d422bf61c
 }
