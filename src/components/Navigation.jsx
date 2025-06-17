@@ -38,14 +38,36 @@ const Navigation = () => {
                         </Link> 
                     </li>
                     <li>
-                        <Link >
+                        <Link to="/profile" className={`near-white ${isCurrentPage('/profile') ? 'fw8' : ''}`}>
                         Profile
                         </Link>
                     </li>
+                    <li>
+                        <div>
+                            <button className="btn btn-lg btn-light m-2" onClick={logout}>
+                                Logout
+                            </button>
+                        </div>
+                    </li>
+                    </>
                 ) : (
-
-                )
-            }
+                    <>
+                    <li>
+                        <div>
+                            <Link to="/signin">  
+                                <button className="btn btn-lg btn-info m-5 signin-button" to="/signin">
+                                    Login
+                                </button>
+                            </Link>
+                            <Link to="/signup" >
+                                <button className="btn btn-lg btn-info m-5 signup-button" to="/signup">
+                                    Signup
+                                </button>
+                            </Link>
+                        </div>
+                    </li>
+                    </>
+                )}
             </ul>
         </nav>
     )
