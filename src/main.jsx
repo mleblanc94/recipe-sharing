@@ -1,4 +1,4 @@
-import ReactDOM from '' //ASK CHATGPT ABOUT THIS!!
+import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 import App from './App.jsx';
