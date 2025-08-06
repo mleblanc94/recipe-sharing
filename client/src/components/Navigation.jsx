@@ -2,8 +2,8 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import Auth from '../utils/auth';
 import 'tachyons';
-import './Navigation.css';
-import  Logo  from '../assets/Logo3.png';
+// import './Navigation.css';
+import  Logo  from '../assets/logo_image.jpg';
 
 const Navigation = () => {
     const location = useLocation();
