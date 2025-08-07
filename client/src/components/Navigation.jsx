@@ -2,8 +2,8 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import Auth from '../utils/auth';
 import 'tachyons';
-// import './Navigation.css';
-import  Logo  from '../assets/logo_image.jpg';
+import './Navigation.css';
+import Logo from '../assets/logo_image.jpg';
 
 const Navigation = () => {
     const location = useLocation();
@@ -21,11 +21,11 @@ const Navigation = () => {
         <nav>
             <ul className="" >
             <li>
-                <img src="{logo}" alt="logo" 
+                <img src={Logo} height="100px" width="150px" alt="logo" 
                 className="shadow-lg p-1 mb-1 bg-white rounded" />
             </li>
             <li>
-                <Link to="/" className={`near-white ${isCurrentPage('/') ? fw8 : ''}`} >
+                <Link to="/" className={`near-white ${isCurrentPage('/') ? 'fw8' : ''}`} >
                 Home
                 </Link>
             </li>
