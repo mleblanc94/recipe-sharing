@@ -51,3 +51,19 @@ interestedIn {
     }
 }
 `;
+
+export const ADD_THUMBS = gql`
+mutation addThumbs($recipeId: ID!, $thumb: Int!, $userId: ID!) {
+addThumbs(recipeId: $ID!, thumb: $thumb, userId: $userId) {
+_id
+thumb
+usersVoted {
+    _id
+}
+}
+}
+`;
+
+export const ADD_COMMENT = gql`
+mutation
+`
