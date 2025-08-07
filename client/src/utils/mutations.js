@@ -63,7 +63,3 @@ usersVoted {
 }
 }
 `;
-
-export const ADD_COMMENT = gql`
-mutation
-`
