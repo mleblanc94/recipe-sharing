@@ -1,0 +1,23 @@
+.signin-button, .signup-button {
+    color: black;
+    margin: 2px;
+    background-color: #9eebcf;
+    border-radius: 2px;
+    cursor: pointer;
+}
+
+.signup-button {
+    margin-right: 10px;
+}
+
+nav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #CCD5AE;
+}
+
+a {
+    text-decoration: none;
+}

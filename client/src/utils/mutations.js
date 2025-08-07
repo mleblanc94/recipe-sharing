@@ -20,7 +20,6 @@ export const CREATE_USER = gql`
     _id
     username
     email
-    password
         }
     }
 }
@@ -54,7 +53,7 @@ interestedIn {
 
 export const ADD_THUMBS = gql`
 mutation addThumbs($recipeId: ID!, $thumb: Int!, $userId: ID!) {
-addThumbs(recipeId: $ID!, thumb: $thumb, userId: $userId) {
+addThumbs(recipeId: $recipeId, thumb: $thumb, userId: $userId) {
 _id
 thumb
 usersVoted {

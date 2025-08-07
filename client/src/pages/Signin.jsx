@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useMutation } from '@apollo/client';
 import { LOGIN_USER } from '../utils/mutations';
 import 'tachyons';
