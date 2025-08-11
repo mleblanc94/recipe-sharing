@@ -51,9 +51,9 @@ interestedIn {
 }
 `;
 
-export const ADD_THUMBS = gql`
-mutation addThumbs($recipeId: ID!, $thumb: Int!, $userId: ID!) {
-addThumbs(recipeId: $recipeId, thumb: $thumb, userId: $userId) {
+export const UPDATE_THUMBS = gql`
+mutation updateThumbs($recipeId: ID!, $thumb: Int!, $userId: ID!) {
+updateThumbs(recipeId: $recipeId, thumb: $thumb, userId: $userId) {
 _id
 thumb
 usersVoted {
