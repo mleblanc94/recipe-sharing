@@ -4,7 +4,7 @@ import './Footer.css';
 
 const Footer = () => {
   return (
-    <div className="footer pa3 bg-light-green tc white">
+    <div className="footer pa3  tc white">
       <p>Recipe Sharing Hub 2025 &copy;</p>
     </div>
   );
