@@ -31,7 +31,7 @@ const Signin = () => {
 
             Auth.login(data.login.token);
         } catch (e) {
-            setError('Invalid Login Credentials! Please try again.');
+            setError('Login Credentials are invalid. Please try again.');
             console.error(e);
         }
 
