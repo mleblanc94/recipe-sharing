@@ -1,7 +1,7 @@
 .signin-button, .signup-button {
-    color: black;
+    color: white;
     margin: 2px;
-    background-color: #9eebcf;
+    background-color: black;
     border-radius: 2px;
     cursor: pointer;
 }
@@ -11,13 +11,20 @@
 }
 
 nav ul {
+    display: flex;
     list-style-type: none;
     margin: 0;
     padding: 0;
     overflow: hidden;
-    background-color: #CCD5AE;
+    background-color: #d9d9d9;
 }
 
 a {
     text-decoration: none;
+}
+
+/* keep your existing rules, add this */
+.links-ul { 
+  align-items: center;      /* vertical align within the nav */
+  gap: 12px;                /* optional: add spacing between items */
 }

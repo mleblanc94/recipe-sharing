@@ -1,9 +1,10 @@
 import React from 'react';
 import 'tachyons';
+import './Footer.css';
 
 const Footer = () => {
   return (
-    <div className="pa3 bg-light-green tc white">
+    <div className="footer pa3 bg-light-green tc white">
       <p>Recipe Sharing Hub 2025 &copy;</p>
     </div>
   );
