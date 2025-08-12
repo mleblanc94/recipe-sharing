@@ -33,7 +33,7 @@ const recipeSchema = new Schema({
     },
     rating: { // Implementing a new rating system
         type: Integer,
-        default: [];
+        default: [],
     }
 });
 

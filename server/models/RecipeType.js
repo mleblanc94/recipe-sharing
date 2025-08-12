@@ -12,4 +12,4 @@ const recipeTypeSchema = new Schema ({
 
 const RecipeType = model('RecipeType', recipeTypeSchema);
 
-module.exports = RecipeType
+module.exports = RecipeType;
