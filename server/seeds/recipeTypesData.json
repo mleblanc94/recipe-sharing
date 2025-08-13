@@ -1,0 +1,30 @@
+[
+    {
+        "name": "Mexican",
+        "description": "Recipes related to traditional Mexican food"
+      },
+      {
+        "name": "Italian",
+        "description": "Recipes related to traditional Italian food"
+      },
+      {
+        "name": "American",
+        "description": "Recipes related to traditional American food"
+      },
+      {
+        "name": "Asian",
+        "description": "Recipes related to traditional Asian food"
+      },
+      {
+        "name": "Snacks",
+        "description": "Recipes that are related to smaller meals or snacks of all kinds"
+      },
+      {
+        "name": "Comfort",
+        "description": "Recipes related to foods that may not be the healthiest, but sometimes you need them"
+      },
+      {
+        "name": "Dessert",
+        "description": "Recipes for delicious desserts"
+      }
+  ]
