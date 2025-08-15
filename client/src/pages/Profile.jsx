@@ -43,5 +43,22 @@ const Profile = () => {
       skip: !userId,
     });
 
+
+    useEffect(() => {
+      if (data1 && data2) {
+        const { getCreatedRecipes } = data1;
+        const { getInterestedIn } = data2;
+
+        setCreatedRecipes(getCreatedRecipes);
+        setInterestedRecipes(getInterestedIn);
+      }
+    }, [data1, data2]);
+
+    const loading = loadingCreated || loadingInterested;
+
+    if (loading) {
+      return <p>Loading...</p>
+    }
+
     
 }
