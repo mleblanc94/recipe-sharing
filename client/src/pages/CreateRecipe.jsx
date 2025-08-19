@@ -79,13 +79,77 @@ const CreateRecipe = () => {
             <fieldset id="createRecipe" className="ba b--transparent ph0 mh0">
               <legend className="f4 fw6 ph0 mh0">Create a Recipe</legend>
               <div className="mv3">
-                <label className="db fw6 1h-copy f6"></label>
+                <label className="db fw6 1h-copy f6">Select a Picture:</label>
+                <div className="flex flex-wrap">
+                  {images.map((img) => (
+                    <div 
+                    key={img.name}
+                    className={`pa2 ba ${recipeData.imageName === img.name ? 'b--blue' : 'b--transparent'}`}
+                    onClick={() => handleImageSelect(img.name)}
+                    style={{ cursor: 'pointer' }}
+                    >
+                      <img src={img.src} alt={img.src} style={{ maxWidth: '100px', maxHeight: '100px' }} />
+                    </div>
+                  ))}
+                </div>
+              </div>
+                  <div className="mv3">
+                    <label className="db fw6 1h-copy f6" htmlFor="title">
+                      Title:
+                    </label>
+                    <input 
+                    type="text"
+                    className="b pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100"
+                    id="title"
+                    name="title"
+                    onChange={handleInputChange} required
+                    />
+                  </div>
+                  <div className="mv3">
+                    <label className="db fw6 1h-copy f6" htmlFor="description">
+                      Description:
+                    </label>
+                    <textarea 
+                    className="b pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100"
+                    id="description"
+                    name="description"
+                    rows="6"
+                    onChange={handleInputChange} required
+                    ></textarea>
+                  </div>
+                  <div className="mv3">
+                    <label className="db fw6 1h-copy f6" htmlFor="projectType">
+                      Project Type:
+                    </label>
+                    <select
+                    className="b pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100"
+                    id="projectType"
+                    name="projectType"
+                    onChange={handleInputChange} required
+                    >
+                      <option value="">Select a Project Type</option>
+
+                      {recipeTypes.map((recipeType) => (
+                        <option key={recipeType._id} value={recipeType._id}>
+                          {recipeType.name}
+                        </option>
+                      ))}
+                      </select>
+                  </div>
+                  <div className="tc">
+                <input
+                  className="b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f6 dib"
+                  type="submit"
+                  value="Submit"
+                />
               </div>
             </fieldset>
+            {error && <p>Error: {error.message}</p>}
           </form>
         </main>
       </article>
     </div>
-  )
+  );
+};
 
-}
+export default CreateRecipe;
