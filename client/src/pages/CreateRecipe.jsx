@@ -54,7 +54,8 @@ const CreateRecipe = () => {
       // Grab the token
       const userToken = AuthService.loggedIn() ? AuthService.getToken() : null;
 
-      // Use the token
+      // Push the user to the profile page to show them it appears there
+      window.location.assign('/profile');
     }
   }
 
