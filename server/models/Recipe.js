@@ -21,7 +21,7 @@ const recipeSchema = new Schema({
         required: true
     },
     interestedIn: {
-        type: [{ type: Schema.Types.objectId, ref: 'User' }],
+        type: [{ type: Schema.Types.ObjectId, ref: 'User' }],
         default: []
     },
     recipeType: {
@@ -31,10 +31,6 @@ const recipeSchema = new Schema({
         type: Date,
         default: Date.now
     },
-    rating: { // Implementing a new rating system
-        type: Integer,
-        default: [],
-    }
 });
 
 const Recipe = model('Recipe', recipeSchema);

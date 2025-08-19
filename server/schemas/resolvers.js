@@ -14,12 +14,12 @@ const signToken = ({ username, email, _id }) => {
 
 const resolvers = {
     Query: {
-        getAllProjects: async () => {
+        getAllRecipes: async () => {
             return await Recipe.find();
         },
         getCreatedRecipes: async (_, { creator }) => {
             const recipes = await Recipe.find({ creator });
-            return projects;
+            return recipes;
         },
         getNotCreatedRecipes: async (_, { creator }) => {
             const recipes = await Recipe.find({ creator: { $ne: creator } });

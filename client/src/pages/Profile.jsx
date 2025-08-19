@@ -1,17 +1,16 @@
 import React, {useState, useEffect} from 'react';
 import { useQuery } from '@apollo/client';
-import { GET_USER_CREATED, GET_USER_INTERESTED, GET_USER_DONATED } from '../utils/queries';
-import jwt_decode from 'jwt-decode';
-import { Elements } from '@stripe/react-stripe-js';
-import { loadStripe } from '@stripe/stripe-js';
+import { GET_USER_CREATED, GET_USER_INTERESTED } from '../utils/queries';
+import { jwtDecode } from 'jwt-decode';
 import AuthService from '../utils/auth';
 import './Profile.css';
-import image1 from '../projImages/image1.jpg';
-import image2 from '../projImages/image2.jpg';
-import image3 from '../projImages/image3.svg';
-import image4 from '../projImages/image4.png';
-import image5 from '../projImages/image5.jpg';
-import image6 from '../projImages/image6.jpg';
+import image1 from '../projectImages/image1.jpg';
+import image2 from '../projectImages/image2.jpg';
+import image3 from '../projectImages/image3.jpg';
+import image4 from '../projectImages/image4.jpg';
+import image5 from '../projectImages/image5.jpg';
+import image6 from '../projectImages/image6.jpeg';
+import image7 from '../projectImages/image7.jpg';
 
 const Profile = () => {
 
@@ -23,6 +22,7 @@ const Profile = () => {
         'image4': image4,
         'image5': image5,
         'image6': image6,
+        'image7': image7,
       };
       return imageMap[imageName] || imageMap['default.png']; // Fallback to a default image if not found
     };
