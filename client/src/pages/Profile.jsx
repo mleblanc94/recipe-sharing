@@ -60,5 +60,42 @@ const Profile = () => {
       return <p>Loading...</p>
     }
 
-    
-}
+    return (
+      <div className="pa4">
+        <header>
+          <p><h3>These are the recipes you have created, or are interested in:</h3></p>
+        </header>
+
+      {/* Recipes Created */}
+      <section>
+        <h2>Recipes Created</h2>
+        <line />
+        <div className="recipe-cards">
+          {createdRecipes.map((recipe, index) => (
+            <div key={index} className="project-card shadow-5">
+              <img src={getImageSource(recipe.imageName)} alt={getImageSource(recipe.imageName)} className='shadow-5' />
+              <h3>{recipe.title}</h3>
+              <p>{recipe.description}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Recipes Interested In */}
+      <section>
+        <h2>Recipes Interested In</h2>
+        <div className="recipe-cards"></div>
+        {interestedRecipes.map((recipe, index) => {
+          <div key={index} className="project-card shadow-5">
+              <img src={getImageSource(recipe.imageName)} alt={getImageSource(recipe.imageName)} className='shadow-5' />
+              <h3>{recipe.title}</h3>
+              <p>{recipe.description}</p>
+            </div>
+        })}
+      </section>
+
+      </div>
+    );   
+};
+
+export default Profile;
