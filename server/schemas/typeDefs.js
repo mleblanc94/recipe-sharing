@@ -50,17 +50,17 @@ const typeDefs = gql`
     }
 
     type Query {
-        getAllProjects: [Project]
-        getInterestedIn(interestedIn: ID!): [Project]
-        getCreatedProjects(creator: ID!): [Project]
-        getNotCreatedProjects(creator: ID!): [Project]
-        getAllProjectTypes: [ProjectType]
+        getAllRecipes: [Recipe]
+        getInterestedIn(interestedIn: ID!): [Recipe]
+        getCreatedRecipes(creator: ID!): [Recipe]
+        getNotCreatedRecipes(creator: ID!): [Recipe]
+        getAllRecipeTypes: [RecipeType]
     }
 
     type Mutation {
     createRecipe(input: RecipeInput!): Recipe
     createUser(username: String!, email: String!, password: String!): Auth
-    addToInterestedIn(projectId: ID!, userId: ID!): Project
+    addToInterestedIn(recipeId: ID!, userId: ID!): Recipe
     login(email: String!, password: String!): Auth
     }
 `;

@@ -4,12 +4,13 @@ import { useQuery } from '@apollo/client';
 import { CREATE_RECIPE } from '../utils/mutations';
 import { GET_ALL_RECIPE_TYPES } from '../utils/queries';
 import AuthService from '../utils/auth';
-import image1 from '../projImages/image1.jpg';
-import image2 from '../projImages/image2.jpg';
-import image3 from '../projImages/image3.svg';
-import image4 from '../projImages/image4.png';
-import image5 from '../projImages/image5.jpg';
-import image6 from '../projImages/image6.jpg';
+import image1 from '../projectImages/image1.jpg';
+import image2 from '../projectImages/image2.jpg';
+import image3 from '../projectImages/image3.jpg';
+import image4 from '../projectImages/image4.jpg';
+import image5 from '../projectImages/image5.jpg';
+import image6 from '../projectImages/image6.jpeg';
+import image7 from '../projectImages/image7.jpg';
 
 const CreateRecipe = () => {
   const [recipeData, setRecipeData] = useState({
@@ -69,6 +70,7 @@ const CreateRecipe = () => {
     { name: 'image4', src: image4 },
     { name: 'image5', src: image5 },
     { name: 'image6', src: image6 },
+    { name: 'image7', src: image7 },
   ];
 
   return (

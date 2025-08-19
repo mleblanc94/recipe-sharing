@@ -12,7 +12,8 @@ import image2 from '../projectImages/image2.jpg';
 import image3 from '../projectImages/image3.jpg';
 import image4 from '../projectImages/image4.jpg';
 import image5 from '../projectImages/image5.jpg';
-import image6 from '../projectImages/image6.jpg';
+import image6 from '../projectImages/image6.jpeg';
+import image7 from '../projectImages/image7.jpg';
 
 const Home = () => {
   const getImageSource = (imageName) => {
@@ -23,6 +24,8 @@ const Home = () => {
             'image4': image4,
             'image5': image5,
             'image6': image6,
+            'image7': image7,
+
     };
     return imageMap[imageName] || imageMap['default.jpg'];
   };
@@ -126,5 +129,6 @@ const Home = () => {
       )}
     </div>
   )
-
 }
+
+export default Home;

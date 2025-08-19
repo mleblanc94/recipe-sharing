@@ -1,5 +1,5 @@
 const mongoose = require('mongoose'); // Imports mongoose
-const RecipeType = require('../models/ProjectType'); // Imports RecipeType model
+const RecipeType = require('../models/RecipeType'); // Imports RecipeType model
 const db = require('../config/connection'); // Database connection
 const cleanDB = require('./cleanDB'); // CleanDB function
 const recipeTypeSeeds = require('./recipeTypesData.json'); // Import recipeType seeds from recipeType.json

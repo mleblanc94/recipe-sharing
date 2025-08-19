@@ -6,7 +6,7 @@ export const GET_ALL_RECIPES = gql`
           _id
           title
           description
-          projectType
+          recipeType
           imageName
           thumbs
         }
