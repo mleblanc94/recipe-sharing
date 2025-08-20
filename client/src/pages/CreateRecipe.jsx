@@ -24,8 +24,9 @@ const CreateRecipe = () => {
   const { loadingPT, errorPT, data } = useQuery(GET_ALL_RECIPE_TYPES);
   if (loadingPT) return <p>Loading...</p>;
   if (errorPT) return <p>Error: {errorPT.message}</p>
+  console.log(data);
 
-  const recipeTypes = data ? data.getAllProjectTypes : [];
+  const recipeTypes = data ? data.getAllRecipeTypes : [];
 
   const [createRecipe, { loading, error }] = useMutation(CREATE_RECIPE);
 
@@ -120,16 +121,16 @@ const CreateRecipe = () => {
                     ></textarea>
                   </div>
                   <div className="mv3">
-                    <label className="db fw6 1h-copy f6" htmlFor="projectType">
-                      Project Type:
+                    <label className="db fw6 1h-copy f6" htmlFor="recipeType">
+                      Recipe Type:
                     </label>
                     <select
                     className="b pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100"
-                    id="projectType"
-                    name="projectType"
+                    id="recipeType"
+                    name="recipeType"
                     onChange={handleInputChange} required
                     >
-                      <option value="">Select a Project Type</option>
+                      <option value="">Select a Recipe Type</option>
 
                       {recipeTypes.map((recipeType) => (
                         <option key={recipeType._id} value={recipeType._id}>
