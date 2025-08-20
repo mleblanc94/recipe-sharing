@@ -8,7 +8,7 @@ import { setContext } from '@apollo/client/link/context';
 import './App.css'
 
 const httpLink = createHttpLink({
-  uri: '/graphql',
+  uri: import.meta.env.VITE_GRAPHQL_URI || 'http://localhost:3001/graphql',
 });
 
 // Contruct request middleware that will attach the JWT token to every request as an 'authorization' header
