@@ -28,9 +28,9 @@ const RecipeDetails = ({ recipe, addToFavorites, closeModal }) => {
   return (
     <div className="modal">
       <div className="modal-content">
-        <span className="close" onClick={closeModal}>&times;</span>
+        <span className="close" onClick={closeModal} style={{ cursor: 'pointer' }}>&times;</span>
         <h2>{recipe.title}</h2>
-        <img src={getImageSource(recipe.imageName)} alt={recipe.title} className="w-50" />
+        <img src={getImageSource(recipe.imageName)} alt={recipe.title} className="w-50" style={{ maxWidth: '250px', maxHeight: '250px' }} />
         <p>{recipe.description}</p>
       </div>
     </div>

@@ -87,7 +87,7 @@ const Profile = () => {
         <div className="recipe-cards"></div>
         {interestedRecipes.map((recipe, index) => (
           <div key={index} className="project-card shadow-5">
-              <img src={getImageSource(recipe.imageName)} alt={getImageSource(recipe.imageName)} className='shadow-5' />
+              <img src={getImageSource(recipe.imageName)} alt={getImageSource(recipe.imageName)} className='shadow-5' style={{ maxWidth: '200px', maxHeight: '200px' }} />
               <h3>{recipe.title}</h3>
               <p>{recipe.description}</p>
             </div>
