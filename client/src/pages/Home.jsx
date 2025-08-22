@@ -34,7 +34,7 @@ const Home = () => {
   const [favorites, setFavorites] = useState([]);
 
   const profile = AuthService.loggedIn() ? AuthService.getProfile() : null;
-  const userId = profile?.date?._id;
+  const userId = profile?.data?._id;
 
   if (!userId) {
     window.location.assign('/signin');

@@ -58,9 +58,9 @@ const Navigation = () => {
                 Auth.loggedIn() ? (
                     <>
                     <li>
-                        <Link to="/" className={`near-white ${isCurrentPage('/') ? 'fw8' : ''}`} >
+                    <Link to="/" className={`near-white ${isCurrentPage('/') ? 'fw8' : ''}`}>
                         Home
-                        </Link>
+                    </Link>
                     </li>
                     <li>
                         <Link to="/create" className={`near-white ${isCurrentPage('/create') ? 'fw8' : ''}`}>
