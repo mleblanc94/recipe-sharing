@@ -85,13 +85,13 @@ const Profile = () => {
       <section>
         <h2>Recipes Interested In</h2>
         <div className="recipe-cards"></div>
-        {interestedRecipes.map((recipe, index) => {
+        {interestedRecipes.map((recipe, index) => (
           <div key={index} className="project-card shadow-5">
               <img src={getImageSource(recipe.imageName)} alt={getImageSource(recipe.imageName)} className='shadow-5' />
               <h3>{recipe.title}</h3>
               <p>{recipe.description}</p>
             </div>
-        })}
+        ))}
       </section>
 
       </div>
