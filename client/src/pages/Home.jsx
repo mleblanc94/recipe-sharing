@@ -86,7 +86,7 @@ const Home = () => {
                 <h2 className="f4 fw6">{recipe.title}</h2>
                 <img
                   src={getImageSource(recipe.imageName)}
-                  style={{ maxWidth: '250px', maxHeight: '250px' }}
+                  style={{ maxWidth: '200px', maxHeight: '200px' }}
                   alt={recipe.title}
                   className="w-100 pointer"
                   onClick={(e) => e.stopPropagation()}
