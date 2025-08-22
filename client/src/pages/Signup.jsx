@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { useMutation } from '@apollo/client';
 import { CREATE_USER } from '../utils/mutations';
@@ -6,6 +7,7 @@ import Auth from '../utils/auth';
 import 'tachyons';
 
 const Signup = () => {
+  const navigate = useNavigate();
   const [formState, setFormState] = useState({
     username: '',
     email: '',
@@ -31,6 +33,7 @@ const Signup = () => {
       variables: { ...formState },
     });
     Auth.login(data.createUser.token);
+    navigate('/', { replace: true });
   } catch (e) {
     console.error(e);
   }

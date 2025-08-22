@@ -23,6 +23,7 @@ const resolvers = {
         },
         getNotCreatedRecipes: async (_, { creator }) => {
             const recipes = await Recipe.find({ creator: { $ne: creator } });
+            return recipes;
         },
         getInterestedIn: async (_, { interestedIn }) => {
             try {
