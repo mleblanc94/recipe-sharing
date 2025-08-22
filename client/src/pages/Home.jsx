@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import RecipeDetails from './RecipeDetails';
 import { useQuery, useMutation } from '@apollo/client';
 import { ADD_INTERESTED_USER } from '../utils/mutations';
-import { GET_ALL_RECIPES } from '../utils/queries';
+import { GET_ALL_RECIPES, GET_USER_INTERESTED } from '../utils/queries';
 import AuthService from '../utils/auth';
 import 'tachyons';
 import './Home.css';
@@ -27,10 +28,24 @@ const Home = () => {
   const userId = profile?.data?._id;
   const isLoggedIn = !!userId;
 
-  // No variables here
-  const { loading, error, data } = useQuery(GET_ALL_RECIPES);
+  const navigate = useNavigate();
+
+  // Redirect to /signin if not logged in
+  useEffect(() => {
+    if (!isLoggedIn) {
+      navigate('/signin', { replace: true });
+    }
+  }, [isLoggedIn, navigate]);
+
+  // Only query once logged in
+  const { loading, error, data } = useQuery(GET_ALL_RECIPES, {
+    skip: !isLoggedIn,
+  });
 
   const [addInterestedIn] = useMutation(ADD_INTERESTED_USER);
+
+  // Don’t render page content while redirecting
+  if (!isLoggedIn) return null;
 
   if (loading) return <p>Loading page...</p>;
   if (error) {
@@ -47,7 +62,11 @@ const Home = () => {
     e.stopPropagation();
     try {
       const { data } = await addInterestedIn({
-        variables: { recipeId, userId },   // ✅ call the mutation function
+        variables: { recipeId, userId },
+        refetchQueries: [
+        { query: GET_USER_INTERESTED, variables: { userId } },
+      ],
+      awaitRefetchQueries: true,
       });
       console.log('User added to InterestedIn', data.addToInterestedIn);
     } catch (err) {
@@ -56,7 +75,6 @@ const Home = () => {
   };
 
   const renderInterested = (recipe) => {
-    if (!isLoggedIn) return null; // hide if not signed in
     const already = (recipe.interestedIn || []).some((u) => u._id === userId);
     return already ? (
       <label>Already chosen recipe previously</label>
@@ -77,7 +95,7 @@ const Home = () => {
         <div className="flex flex-wrap justify-between mw8">
           {recipes.map((recipe) => (
             <article
-              key={recipe._id}  // ✅ stable key
+              key={recipe._id}
               className="br2 ba dark-gray b--black-10 mv4 w-100 w-40-l shadow-5 ma2"
               onClick={() => openRecipeDetails(recipe)}
               style={{ cursor: 'pointer' }}
@@ -92,7 +110,11 @@ const Home = () => {
                   onClick={(e) => e.stopPropagation()}
                 />
                 <p>{recipe.description}</p>
-                {renderInterested(recipe)} {/* ✅ actually render it */}
+                <button onClick={(e) => { e.stopPropagation(); openRecipeDetails(recipe); }}>
+                  More details
+                </button>
+                &nbsp;&nbsp;
+                {renderInterested(recipe)}
               </main>
             </article>
           ))}
