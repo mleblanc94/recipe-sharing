@@ -82,7 +82,7 @@ const CreateRecipe = () => {
             <fieldset id="createRecipe" className="ba b--transparent ph0 mh0">
               <legend className="f4 fw6 ph0 mh0">Create a Recipe</legend>
               <div className="mv3">
-                <label className="db fw6 1h-copy f6">Select a Picture:</label>
+                <label className="db fw6 1h-copy f6">Select an Image:</label>
                 <div className="flex flex-wrap">
                   {images.map((img) => (
                     <div 
@@ -91,7 +91,7 @@ const CreateRecipe = () => {
                     onClick={() => handleImageChange(img.name)}
                     style={{ cursor: 'pointer' }}
                     >
-                      <img src={img.src} alt={img.src} style={{ maxWidth: '100px', maxHeight: '100px' }} />
+                      <img src={img.src} alt={img.src} style={{ maxWidth: '200px', maxHeight: '200px' }} />
                     </div>
                   ))}
                 </div>

@@ -30,7 +30,7 @@ const RecipeDetails = ({ recipe, addToFavorites, closeModal }) => {
       <div className="modal-content">
         <span className="close" onClick={closeModal}>&times;</span>
         <h2>{recipe.title}</h2>
-        <img src={getImageSrc(recipe.imageName)} alt={recipe.title} className="w-50" />
+        <img src={getImageSource(recipe.imageName)} alt={recipe.title} className="w-50" />
         <p>{recipe.description}</p>
       </div>
     </div>

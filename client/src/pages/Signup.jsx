@@ -33,7 +33,7 @@ const Signup = () => {
       variables: { ...formState },
     });
     Auth.login(data.createUser.token);
-    navigate('/', { replace: true });
+    // navigate('/', { replace: true });
   } catch (e) {
     console.error(e);
   }
