@@ -88,7 +88,7 @@ const CreateRecipe = () => {
                     <div 
                     key={img.name}
                     className={`pa2 ba ${recipeData.imageName === img.name ? 'b--blue' : 'b--transparent'}`}
-                    onClick={() => handleImageSelect(img.name)}
+                    onClick={() => handleImageChange(img.name)}
                     style={{ cursor: 'pointer' }}
                     >
                       <img src={img.src} alt={img.src} style={{ maxWidth: '100px', maxHeight: '100px' }} />

@@ -8,7 +8,7 @@ export const GET_ALL_RECIPES = gql`
           description
           recipeType
           imageName
-          thumbs
+          interestedIn { _id }
         }
     }
 `;

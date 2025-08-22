@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import RecipeDetails from './RecipeDetails';
-import { useQuery } from '@apollo/client';
-import { useMutation } from '@apollo/client';
-import {ADD_INTERESTED_USER} from '../utils/mutations';
-import { GET_USER_NOT_CREATED } from '../utils/queries';
+import { useQuery, useMutation } from '@apollo/client';
+import { ADD_INTERESTED_USER } from '../utils/mutations';
+import { GET_ALL_RECIPES } from '../utils/queries';
 import AuthService from '../utils/auth';
 import 'tachyons';
 import './Home.css';
@@ -17,16 +16,7 @@ import image7 from '../projectImages/image7.jpg';
 
 const Home = () => {
   const getImageSource = (imageName) => {
-    const imageMap = {
-            'image1': image1,
-            'image2': image2,
-            'image3': image3,
-            'image4': image4,
-            'image5': image5,
-            'image6': image6,
-            'image7': image7,
-
-    };
+    const imageMap = { image1, image2, image3, image4, image5, image6, image7 };
     return imageMap[imageName] || imageMap['default.jpg'];
   };
 
@@ -35,56 +25,44 @@ const Home = () => {
 
   const profile = AuthService.loggedIn() ? AuthService.getProfile() : null;
   const userId = profile?.data?._id;
+  const isLoggedIn = !!userId;
 
-  if (!userId) {
-    window.location.assign('/signin');
-    return null;
-  }
-
-  const { loading, error, data } = useQuery(GET_USER_NOT_CREATED, {
-    variables: { userId },
-  });
+  // No variables here
+  const { loading, error, data } = useQuery(GET_ALL_RECIPES);
 
   const [addInterestedIn] = useMutation(ADD_INTERESTED_USER);
 
   if (loading) return <p>Loading page...</p>;
-
-  const recipes = data?.getNotCreatedRecipes || [];
-
-  const openRecipeDetails = (recipe) => {
-    setSelectedRecipe(recipe);
+  if (error) {
+    console.error(error);
+    return <p>Failed to load recipes.</p>;
   }
 
-  const isRecipeInterestedIn = (recipeId, interestedInID) => {
-    const userExists = interestedInID.some(user => user._id === userId);
-    if (userExists) {
-      return <label>Already chosen recipe previously</label>
-    } else {
-      return (
-        <button onClick={(e) => addInterestedIn(recipeId, e)}>
-          Interested
-        </button>
-      );
+  const recipes = data?.getAllRecipes || [];
+
+  const openRecipeDetails = (recipe) => setSelectedRecipe(recipe);
+  const addToFavorites = (recipe) => setFavorites((prev) => [...prev, recipe]);
+
+  const addInterested = async (e, recipeId) => {
+    e.stopPropagation();
+    try {
+      const { data } = await addInterestedIn({
+        variables: { recipeId, userId },   // ✅ call the mutation function
+      });
+      console.log('User added to InterestedIn', data.addToInterestedIn);
+    } catch (err) {
+      console.error('Error adding user to interested in:', err.message);
     }
   };
 
-  const addToFavorites = (recipe) => {
-    setFavorites([...favorites, recipe]);
-  }
-
-  const addInterested = async (recipeId, e) => {
-    e.stopPropagation();
-    try {
-      const { data } = await addInterested({
-        variables: {
-          recipeId,
-          userId,
-        },
-      });
-      console.log('User added to InterestedIn', data.addToInterestedIn);
-    } catch (error) {
-      console.error('Error adding user to interested in:', error.message);
-    }
+  const renderInterested = (recipe) => {
+    if (!isLoggedIn) return null; // hide if not signed in
+    const already = (recipe.interestedIn || []).some((u) => u._id === userId);
+    return already ? (
+      <label>Already chosen recipe previously</label>
+    ) : (
+      <button onClick={(e) => addInterested(e, recipe._id)}>Interested</button>
+    );
   };
 
   return (
@@ -92,14 +70,14 @@ const Home = () => {
       <div>
         <h1>Welcome to Recipe Share!</h1>
         <p>Get ideas on the best community recipes around</p>
-        {/* Keep your intro paragraphs here */}
       </div>
+
       <h1 className="tc">Recipes</h1>
       <div className="flex justify-center">
         <div className="flex flex-wrap justify-between mw8">
-          {recipes.map((recipe, index) => (
+          {recipes.map((recipe) => (
             <article
-              key={index}
+              key={recipe._id}  // ✅ stable key
               className="br2 ba dark-gray b--black-10 mv4 w-100 w-40-l shadow-5 ma2"
               onClick={() => openRecipeDetails(recipe)}
               style={{ cursor: 'pointer' }}
@@ -114,6 +92,7 @@ const Home = () => {
                   onClick={(e) => e.stopPropagation()}
                 />
                 <p>{recipe.description}</p>
+                {renderInterested(recipe)} {/* ✅ actually render it */}
               </main>
             </article>
           ))}
@@ -121,14 +100,14 @@ const Home = () => {
       </div>
 
       {selectedRecipe && (
-          <RecipeDetails
-            recipe={selectedRecipe}
-            addToFavorites={addToFavorites}
-            closeModal={() => setSelectedRecipe(null)}
-          />
+        <RecipeDetails
+          recipe={selectedRecipe}
+          addToFavorites={addToFavorites}
+          closeModal={() => setSelectedRecipe(null)}
+        />
       )}
     </div>
-  )
-}
+  );
+};
 
 export default Home;
