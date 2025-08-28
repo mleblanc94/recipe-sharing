@@ -1,15 +1,105 @@
-.modal {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 80%; /* Set the width to 80% of the viewport */
-    height: 80%; /* Set the height to 80% of the viewport */
-    max-width: 800px; /* Set a maximum width for larger screens */
-    max-height: 600px; /* Set a maximum height for larger screens */
-    border: 1px solid black;
-    padding: 20px;
-    background-color: white;
-    z-index: 1000; /* Ensure it's on top of other elements */
-    overflow-y: auto; /* Enable vertical scrolling if content overflows */
-  }
+/* Layout */
+.home-wrap { padding: 2rem; }
+.home-hero h1 { font-size: 2rem; margin: 0 0 .25rem; }
+.home-hero p { color: #4b5563; margin: 0 0 1.5rem; }
+.section-title { text-align: center; margin: 1rem 0 1.25rem; }
+
+/* Responsive grid */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.25rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* Card */
+.card {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 6px 20px rgba(0,0,0,.08);
+  overflow: hidden;
+  transition: transform .18s ease, box-shadow .18s ease;
+  cursor: pointer;
+}
+.card:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(0,0,0,.12); }
+
+/* Image constrained */
+.card-media { width: 100%; height: 180px; overflow: hidden; background: #f3f4f6; }
+.card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;           /* <-- keeps images nicely cropped */
+  display: block;
+}
+
+/* Body */
+.card-body { padding: .9rem 1rem .25rem; }
+.card-title { margin: 0 0 .35rem; font-size: 1.1rem; }
+.card-text { margin: 0; color: #374151; font-size: .95rem; line-height: 1.35; }
+
+/* Actions */
+.card-actions {
+  display: flex;
+  gap: .5rem;
+  padding: 0 1rem 1rem;
+}
+.btn {
+  border: none;
+  background: #6b8dfc;
+  color: #fff;
+  padding: .5rem .9rem;
+  border-radius: 10px;
+  font-weight: 600;
+}
+.btn:hover { filter: brightness(0.95); }
+.btn-outline {
+  background: transparent;
+  border: 1px solid #cbd5e1;
+  color: #111827;
+}
+.btn-outline:hover { background: #f3f4f6; }
+
+.badge {
+  background: #e8f5e9;
+  color: #16a34a;
+  border: 1px solid #bbf7d0;
+  padding: .45rem .7rem;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: .85rem;
+  cursor: default;
+}
+
+/* Make every card a column so footer can stick to the bottom */
+.card {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Let the text area stretch so actions align across the row */
+.card-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Keep the actions at the bottom of the card */
+.card-actions {
+  margin-top: auto;              /* <-- pushes actions to bottom */
+  display: flex;
+  gap: .5rem;
+  padding: 0 1rem 1rem;
+}
+
+/* Consistent button heights (and easy vertical centering) */
+.btn,
+.btn-outline {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* (Optional) Give buttons a consistent width for perfect symmetry */
+/* .btn, .btn-outline { width: 110px; } */
