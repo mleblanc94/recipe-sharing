@@ -1,3 +1,4 @@
+// client/src/pages/Home.jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import RecipeDetails from './RecipeDetails';
@@ -7,6 +8,7 @@ import { GET_ALL_RECIPES, GET_USER_INTERESTED } from '../utils/queries';
 import AuthService from '../utils/auth';
 import 'tachyons';
 import './Home.css';
+
 import image1 from '../projectImages/image1.jpg';
 import image2 from '../projectImages/image2.jpg';
 import image3 from '../projectImages/image3.jpg';
@@ -18,11 +20,10 @@ import image7 from '../projectImages/image7.jpg';
 const Home = () => {
   const getImageSource = (imageName) => {
     const imageMap = { image1, image2, image3, image4, image5, image6, image7 };
-    return imageMap[imageName] || imageMap['default.jpg'];
+    return imageMap[imageName] || imageMap.image1;
   };
 
   const [selectedRecipe, setSelectedRecipe] = useState(null);
-  const [favorites, setFavorites] = useState([]);
 
   const profile = AuthService.loggedIn() ? AuthService.getProfile() : null;
   const userId = profile?.data?._id;
@@ -30,23 +31,14 @@ const Home = () => {
 
   const navigate = useNavigate();
 
-  // Redirect to /signin if not logged in
   useEffect(() => {
-    if (!isLoggedIn) {
-      navigate('/signin', { replace: true });
-    }
+    if (!isLoggedIn) navigate('/signin', { replace: true });
   }, [isLoggedIn, navigate]);
 
-  // Only query once logged in
-  const { loading, error, data } = useQuery(GET_ALL_RECIPES, {
-    skip: !isLoggedIn,
-  });
-
+  const { loading, error, data } = useQuery(GET_ALL_RECIPES, { skip: !isLoggedIn });
   const [addInterestedIn] = useMutation(ADD_INTERESTED_USER);
 
-  // Don’t render page content while redirecting
   if (!isLoggedIn) return null;
-
   if (loading) return <p>Loading page...</p>;
   if (error) {
     console.error(error);
@@ -56,19 +48,15 @@ const Home = () => {
   const recipes = data?.getAllRecipes || [];
 
   const openRecipeDetails = (recipe) => setSelectedRecipe(recipe);
-  const addToFavorites = (recipe) => setFavorites((prev) => [...prev, recipe]);
 
   const addInterested = async (e, recipeId) => {
     e.stopPropagation();
     try {
-      const { data } = await addInterestedIn({
+      await addInterestedIn({
         variables: { recipeId, userId },
-        refetchQueries: [
-        { query: GET_USER_INTERESTED, variables: { userId } },
-      ],
-      awaitRefetchQueries: true,
+        refetchQueries: [{ query: GET_USER_INTERESTED, variables: { userId } }],
+        awaitRefetchQueries: true,
       });
-      console.log('User added to InterestedIn', data.addToInterestedIn);
     } catch (err) {
       console.error('Error adding user to interested in:', err.message);
     }
@@ -77,54 +65,67 @@ const Home = () => {
   const renderInterested = (recipe) => {
     const already = (recipe.interestedIn || []).some((u) => u._id === userId);
     return already ? (
-      <label>Already chosen recipe previously</label>
+      <span className="badge">Interested ✓</span>
     ) : (
-      <button onClick={(e) => addInterested(e, recipe._id)}>Interested</button>
+      <button className="btn" onClick={(e) => addInterested(e, recipe._id)}>
+        Interested
+      </button>
     );
   };
 
   return (
-    <div className="pa4">
-      <div>
+    <div className="home-wrap">
+      <header className="home-hero">
         <h1>Welcome to Recipe Share!</h1>
-        <p>Get ideas on the best community recipes around</p>
-      </div>
+        <p>Discover crowd-favorite recipes from the community. Click <em>More details</em> to preview any dish.</p>
+      </header>
 
-      <h1 className="tc">Recipes</h1>
-      <div className="flex justify-center">
-        <div className="flex flex-wrap justify-between mw8">
-          {recipes.map((recipe) => (
-            <article
-              key={recipe._id}
-              className="br2 ba dark-gray b--black-10 mv4 w-100 w-40-l shadow-5 ma2"
-              onClick={() => openRecipeDetails(recipe)}
-              style={{ cursor: 'pointer' }}
-            >
-              <main className="pa4 black-80">
-                <h2 className="f4 fw6">{recipe.title}</h2>
-                <img
-                  src={getImageSource(recipe.imageName)}
-                  style={{ maxWidth: '200px', maxHeight: '200px' }}
-                  alt={recipe.title}
-                  className="w-100 pointer"
-                  onClick={(e) => e.stopPropagation()}
-                />
-                <p>{recipe.description}</p>
-                <button onClick={(e) => { e.stopPropagation(); openRecipeDetails(recipe); }}>
-                  More details
-                </button>
-                &nbsp;&nbsp;
-                {renderInterested(recipe)}
-              </main>
-            </article>
-          ))}
-        </div>
+      <h2 className="section-title">Recipes</h2>
+
+      <div className="card-grid">
+        {recipes.map((recipe) => (
+          <article
+            key={recipe._id}
+            className="card"
+            onClick={() => openRecipeDetails(recipe)}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => e.key === 'Enter' && openRecipeDetails(recipe)}
+          >
+            <figure className="card-media">
+              <img
+                src={getImageSource(recipe.imageName)}
+                alt={recipe.title}
+                className="card-img"
+                onClick={(e) => e.stopPropagation()}
+              />
+            </figure>
+
+            <div className="card-body">
+              <h3 className="card-title">{recipe.title}</h3>
+              <p className="card-text">{recipe.description}</p>
+            </div>
+
+            <div className="card-actions">
+              <button
+                className="btn btn-outline"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  openRecipeDetails(recipe);
+                }}
+              >
+                More details
+              </button>
+              {renderInterested(recipe)}
+            </div>
+          </article>
+        ))}
       </div>
 
       {selectedRecipe && (
         <RecipeDetails
           recipe={selectedRecipe}
-          addToFavorites={addToFavorites}
+          addToFavorites={() => {}}
           closeModal={() => setSelectedRecipe(null)}
         />
       )}
