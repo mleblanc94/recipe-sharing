@@ -6,6 +6,8 @@ export const GET_ALL_RECIPES = gql`
           _id
           title
           description
+          ingredients
+          instructions
           recipeType
           imageName
           interestedIn { _id }

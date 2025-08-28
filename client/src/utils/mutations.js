@@ -31,6 +31,8 @@ mutation CreateRecipe($input: RecipeInput!) {
     _id
     title
     description
+    ingredients
+    instructions
     creator {
         _id
     }

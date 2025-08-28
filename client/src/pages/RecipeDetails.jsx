@@ -32,6 +32,10 @@ const RecipeDetails = ({ recipe, addToFavorites, closeModal }) => {
         <h2>{recipe.title}</h2>
         <img src={getImageSource(recipe.imageName)} alt={recipe.title} className="w-50" style={{ maxWidth: '250px', maxHeight: '250px' }} />
         <p>{recipe.description}</p>
+        <h4>Ingredients:</h4>
+        <p>{recipe.ingredients}</p>
+        <h4>Instructions</h4>
+        <p>{recipe.instructions}</p>
       </div>
     </div>
   )
