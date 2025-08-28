@@ -11,6 +11,8 @@ const typeDefs = gql`
     input RecipeInput {
     title: String!
     description: String!
+    ingredients: String
+    instructions: String
     creator: String!
     recipeType: String!
     imageName: String
@@ -24,6 +26,8 @@ const typeDefs = gql`
     _id: ID!
     title: String!
     description: String!
+    ingredients: String
+    instructions: String
     creator: Creator
     interestedIn: [User]
     recipeType: String!

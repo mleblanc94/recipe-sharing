@@ -16,6 +16,8 @@ const CreateRecipe = () => {
   const [recipeData, setRecipeData] = useState({
     title: '',
     description: '',
+    ingredients: '',
+    instructions: '',
     creator: '',
     recipeType: '',
     imageName: 'default.png',
@@ -116,6 +118,30 @@ const CreateRecipe = () => {
                     className="b pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100"
                     id="description"
                     name="description"
+                    rows="6"
+                    onChange={handleInputChange} required
+                    ></textarea>
+                  </div>
+                  <div className="mv3">
+                    <label className="db fw6 1h-copy f6" htmlFor="description">
+                      Ingredients:
+                    </label>
+                    <textarea 
+                    className="b pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100"
+                    id="ingredients"
+                    name="ingredients"
+                    rows="6"
+                    onChange={handleInputChange} required
+                    ></textarea>
+                  </div>
+                  <div className="mv3">
+                    <label className="db fw6 1h-copy f6" htmlFor="description">
+                      Instructions:
+                    </label>
+                    <textarea 
+                    className="b pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100"
+                    id="instructions"
+                    name="instructions"
                     rows="6"
                     onChange={handleInputChange} required
                     ></textarea>
