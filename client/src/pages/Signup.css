@@ -1,0 +1,133 @@
+/* Page container */
+.auth-wrap {
+  padding: 2rem 1rem 3rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Title area */
+.auth-hero h1 {
+  margin: 0 0 1.5rem;
+  text-align: center;
+  font-size: 1.9rem;
+}
+
+/* Card */
+.auth-card {
+  width: 100%;
+  max-width: 540px;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 1.5rem 1.25rem;
+  border: 1px solid #e5e7eb;
+}
+
+@media (min-width: 640px) {
+  .auth-card { padding: 2rem; }
+}
+
+.auth-title {
+  margin: 0 0 1rem;
+  font-size: 1.25rem;
+}
+
+/* Form */
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: .75rem;
+  margin-top: .5rem;
+}
+
+.auth-label {
+  font-size: .9rem;
+  font-weight: 600;
+}
+
+/* Inputs */
+.auth-input,
+.auth-input-group .auth-input {
+  width: 100%;
+  padding: .7rem .85rem;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  background: #fff;
+  outline: none;
+  font-size: 1rem;
+}
+
+.auth-input:focus {
+  border-color: #6b8dfc;
+  box-shadow: 0 0 0 3px rgba(107, 141, 252, 0.25);
+}
+
+/* Password toggle */
+.auth-input-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.pw-toggle {
+  position: absolute;
+  right: .5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 0;
+  background: transparent;
+  padding: .25rem .5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  color: #6b7280;
+  cursor: pointer;
+}
+
+.pw-toggle:hover { color: #111827; }
+
+/* Button */
+.auth-btn {
+  margin-top: .5rem;
+  border: 0;
+  background: #6b8dfc;
+  color: #fff;
+  padding: .75rem 1rem;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: transform .08s ease, filter .15s ease;
+}
+
+.auth-btn:hover { filter: brightness(0.98); }
+.auth-btn:active { transform: translateY(1px); }
+.auth-btn:disabled {
+  opacity: .6;
+  cursor: not-allowed;
+}
+
+/* Error */
+.auth-error {
+  margin-top: .25rem;
+  background: #fff1f2;
+  color: #be123c;
+  border: 1px solid #fecdd3;
+  border-radius: 10px;
+  padding: .65rem .75rem;
+  font-size: .95rem;
+}
+
+/* Footer link */
+.auth-footnote {
+  margin: 1rem 0 0;
+  text-align: center;
+  color: #6b7280;
+}
+
+.auth-link {
+  color: #6b8dfc;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.auth-link:hover { text-decoration: underline; }

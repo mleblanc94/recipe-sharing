@@ -103,3 +103,292 @@
 
 /* (Optional) Give buttons a consistent width for perfect symmetry */
 /* .btn, .btn-outline { width: 110px; } */
+
+/* ===== Modal ===== */
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);        /* slate-900 @45% */
+  backdrop-filter: blur(2px);
+  display: grid;
+  place-items: center;
+  z-index: 1000;
+  animation: modal-fade .18s ease-out;
+}
+
+.modal-panel {
+  width: min(900px, 92vw);
+  max-height: 90vh;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 20px 50px rgba(0,0,0,.25);
+  overflow: hidden;
+  animation: modal-pop .18s ease-out;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.close {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #555;
+  background: #f3f4f6;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease;
+}
+.close:hover {
+  background: #e5e7eb;
+  cursor: pointer;
+}
+
+/* content grid */
+.modal-content {
+  display: grid;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 720px) {
+  .modal-content {
+    grid-template-columns: 1.1fr 1.4fr;   /* image | text */
+  }
+}
+
+/* media area */
+.modal-media {
+  margin: 0;
+  background: #f8fafc;
+  display: grid;
+  place-items: center;
+}
+.modal-media img {
+  width: 100%;
+  height: 100%;
+  max-height: 420px;
+  object-fit: cover;
+}
+
+/* body area */
+.modal-body {
+  padding: 1rem 1.2rem 1.25rem;
+  overflow: auto;
+  max-height: 70vh; /* scroll text if very long */
+}
+
+.modal-description {
+  margin: .25rem 0 1rem;
+  color: #374151;
+  line-height: 1.5;
+}
+
+.modal-subtitle {
+  margin: 1rem 0 .35rem;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+/* lists */
+.bullet-list,
+.number-list {
+  margin: 0 0 .75rem 1.1rem;
+  color: #1f2937;
+}
+.bullet-list li + li,
+.number-list li + li { margin-top: .35rem; }
+
+.bullet-list { list-style: disc; }
+.number-list { list-style: decimal; }
+
+/* animations */
+@keyframes modal-fade {
+  from { opacity: 0 }
+  to   { opacity: 1 }
+}
+@keyframes modal-pop {
+  from { transform: translateY(6px) scale(.98) }
+  to   { transform: translateY(0) scale(1) }
+}
+
+/* ===== Create Recipe (shared aesthetic with Home/Signin/Signup) ===== */
+
+.form-wrap {
+  padding: 2rem;
+  display: grid;
+  place-items: start center;
+}
+
+.form-card {
+  width: min(900px, 100%);
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 8px 28px rgba(0,0,0,.08);
+  overflow: hidden;
+}
+
+.form-header {
+  padding: 1.25rem 1.5rem 0.5rem;
+}
+.form-header h2 {
+  margin: 0 0 .25rem;
+}
+.form-sub {
+  margin: 0 0 .75rem;
+  color: #4b5563;
+}
+
+form {
+  padding: 0 1.5rem 1.25rem;
+}
+
+.field {
+  margin: 1rem 0 1.1rem;
+}
+.field-label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: .5rem;
+}
+
+.input,
+.textarea {
+  width: 100%;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: .75rem .9rem;
+  outline: none;
+  transition: box-shadow .15s ease, border-color .15s ease;
+  background: #fff;
+}
+
+.input:focus,
+.textarea:focus {
+  border-color: #93c5fd;
+  box-shadow: 0 0 0 3px rgba(147,197,253,.45);
+}
+
+.textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+/* Image chooser grid */
+.image-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: .75rem;
+}
+
+.image-option {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  overflow: hidden;
+  padding: 0;
+  background: #fff;
+  cursor: pointer;
+  transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+}
+
+.image-option:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 18px rgba(0,0,0,.08);
+}
+
+.image-option.selected {
+  border-color: #6b8dfc;
+  box-shadow: 0 0 0 3px rgba(107,141,252,.35);
+}
+
+.image-option img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Actions */
+.form-actions {
+  display: flex;
+  gap: .75rem;
+  align-items: center;
+  margin-top: 1.25rem;
+}
+
+.btn {
+  border: none;
+  background: #6b8dfc;
+  color: #fff;
+  padding: .6rem 1.1rem;
+  border-radius: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: filter .12s ease, transform .05s ease;
+}
+.btn:hover { filter: brightness(.95); }
+.btn:active { transform: translateY(1px); }
+
+.error-text {
+  color: #dc2626;
+  font-weight: 600;
+}
+
+/* ===== Profile page styling (reuses card styles from Home) ===== */
+
+.profile-wrap {
+  padding: 2rem;
+}
+
+.profile-hero h1 {
+  margin: 0 0 .25rem;
+}
+
+.profile-hero .sub {
+  color: #4b5563;
+  margin: 0 0 1.25rem;
+}
+
+.profile-section {
+  margin-top: 1.75rem;
+}
+
+.section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: .75rem;
+}
+
+.section-head h2 {
+  margin: 0;
+}
+
+.empty-state {
+  padding: 1rem 1.25rem;
+  border: 1px dashed #e5e7eb;
+  border-radius: 12px;
+  color: #6b7280;
+  background: #fafafa;
+}
+
+/* Card/grid styles already exist in Home.css:
+   .card-grid, .card, .card-media, .card-img, .card-body, .card-title, .card-text
+   If you don’t have them in scope here, keep this comment just as a reminder. */
+
+

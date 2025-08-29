@@ -1,109 +1,135 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Link } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useMutation } from '@apollo/client';
 import { CREATE_USER } from '../utils/mutations';
 import Auth from '../utils/auth';
 import 'tachyons';
+import './Signup.css';
 
 const Signup = () => {
   const navigate = useNavigate();
+  const [showPw, setShowPw] = useState(false);
+
   const [formState, setFormState] = useState({
     username: '',
     email: '',
     password: '',
   });
-  const [createUser, { error, data }] = useMutation(CREATE_USER);
 
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-    
-    setFormState({
-      ...formState,
-      [name]: value,
-    });
+  const [createUser, { error, loading }] = useMutation(CREATE_USER);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormState((s) => ({ ...s, [name]: value }));
   };
 
-  const handleFormSubmit = async (event) => {
-    event.preventDefault();
-    console.log(formState);
+  const handleFormSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const { data } = await createUser({
+        variables: { ...formState },
+      });
+      // Log in & take them to the home page (you can change to /profile if you prefer)
+      Auth.login(data.createUser.token);
+      navigate('/', { replace: true });
+    } catch (e) {
+      // handled visually below
+      console.error(e);
+    }
+  };
 
-  try {
-    const { data } = await createUser({
-      variables: { ...formState },
-    });
-    Auth.login(data.createUser.token);
-    // navigate('/', { replace: true });
-  } catch (e) {
-    console.error(e);
-  }
+  const canSubmit =
+    formState.email.trim() &&
+    formState.username.trim() &&
+    formState.password.trim();
+
+  return (
+    <div className="auth-wrap">
+      <header className="auth-hero">
+        <h1>Welcome to the best recipe sharing website there is!</h1>
+      </header>
+
+      <section className="auth-card shadow-5">
+        <h2 className="auth-title">Sign up to see great recipe ideas!</h2>
+
+        <form className="auth-form" onSubmit={handleFormSubmit} noValidate>
+          <label className="auth-label" htmlFor="email">
+            Email
+          </label>
+          <input
+            className="auth-input"
+            type="email"
+            id="email"
+            name="email"
+            value={formState.email}
+            onChange={handleChange}
+            autoComplete="email"
+            required
+          />
+
+          <label className="auth-label" htmlFor="username">
+            Username
+          </label>
+          <input
+            className="auth-input"
+            type="text"
+            id="username"
+            name="username"
+            value={formState.username}
+            onChange={handleChange}
+            autoComplete="username"
+            required
+          />
+
+          <label className="auth-label" htmlFor="password">
+            Password
+          </label>
+          <div className="auth-input-group">
+            <input
+              className="auth-input"
+              type={showPw ? 'text' : 'password'}
+              id="password"
+              name="password"
+              value={formState.password}
+              onChange={handleChange}
+              autoComplete="new-password"
+              required
+            />
+            <button
+              type="button"
+              className="pw-toggle"
+              onClick={() => setShowPw((v) => !v)}
+              aria-label={showPw ? 'Hide password' : 'Show password'}
+            >
+              {showPw ? 'Hide' : 'Show'}
+            </button>
+          </div>
+
+          {error && (
+            <div className="auth-error">
+              <strong>Sign up failed:</strong>{' '}
+              {error.message?.replace('GraphQL error:', '').trim()}
+            </div>
+          )}
+
+          <button
+            className="auth-btn"
+            type="submit"
+            disabled={!canSubmit || loading}
+          >
+            {loading ? 'Creating…' : 'Sign Up'}
+          </button>
+        </form>
+
+        <p className="auth-footnote">
+          Already have an account?{' '}
+          <Link to="/signin" className="auth-link">
+            Log in
+          </Link>
+        </p>
+      </section>
+    </div>
+  );
 };
-
-return(
-  <div className="tc">
-    <h1 className="f2">Welcome to the best recipe sharing website there is!</h1>
-    <div className="flex justify-center">
-        <article className="br2 ba dark-gray b--black-10 mv4 w-40-l mw6 mh4 center shadow-1">
-          <main className="pa4 black-80">
-            {/* Signup Card */}
-            <form className="measure" onSubmit={handleFormSubmit}>
-              <fieldset id="signup" className="ba b--transparent ph0 mh0">
-                <legend className="f4 fw6 ph0 mh0">Sign up to see great recipe ideas!</legend>
-                <div className="mt3">
-                  <label className="db fw6 lh-copy f6" htmlFor="email">
-                    Email:
-                  </label>
-                  <input
-                    className="pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100"
-                    type="email"
-                    id="email"
-                    name="email"
-                    value={formState.email}
-                    onChange={handleChange}
-                  />
-                </div>
-                <div className="mt3">
-                  <label className="db fw6 lh-copy f6" htmlFor="username">
-                    Username:
-                  </label>
-                  <input
-                    className="pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100"
-                    type="text"
-                    id="username"
-                    name="username"
-                    value={formState.username}
-                    onChange={handleChange}
-                  />
-                </div>
-                <div className="mv3">
-                  <label className="db fw6 lh-copy f6" htmlFor="password">
-                    Password:
-                  </label>
-                  <input
-                    className="b pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100"
-                    type="password"
-                    id="password"
-                    name="password"
-                    value={formState.password}
-                    onChange={handleChange}
-                  />
-                </div>
-                <div className="tc">
-                  <input
-                    className="b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f6 dib"
-                    type="submit"
-                    value={'Sign Up'}
-                  />
-                </div>
-              </fieldset>
-              {error && <p>Error: {error.message}</p>}
-            </form>
-          </main>
-        </article>
-      </div>
-  </div>
-)
-
-}
 
 export default Signup;
