@@ -5,9 +5,8 @@ import { GET_ALL_RECIPE_TYPES } from '../utils/queries';
 import AuthService from '../utils/auth';
 
 import 'tachyons';
-import './Home.css'; // keep using your shared styles
+import './Home.css';
 
-// Images
 import image1 from '../projectImages/image1.jpg';
 import image2 from '../projectImages/image2.jpg';
 import image3 from '../projectImages/image3.jpg';
@@ -26,16 +25,23 @@ const images = [
   { name: 'image7', src: image7, alt: 'Recipe image 7' },
 ];
 
+// turn a textarea into an array of lines (strip leading "- " and blanks)
+const toLines = (s) =>
+  String(s || '')
+    .split(/\r?\n/)
+    .map(t => t.replace(/^\s*-\s*/, '').trim())
+    .filter(Boolean);
+
 const CreateRecipe = () => {
   const [recipeData, setRecipeData] = useState({
     title: '',
     description: '',
-    ingredients: '',
+    ingredients: '',     // textareas as strings in state
     instructions: '',
-    creator: '',
-    recipeType: '',
-    imageName: 'image1', // default to something visible
+    recipeType: '',      // select value (ObjectId or enum string)
+    imageName: 'image1',
   });
+  const [formError, setFormError] = useState('');
 
   const { loading: loadingPT, error: errorPT, data } = useQuery(GET_ALL_RECIPE_TYPES);
   const recipeTypes = data?.getAllRecipeTypes ?? [];
@@ -53,22 +59,43 @@ const CreateRecipe = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const creator = AuthService.getProfile().data._id;
-      const { data } = await createRecipe({
-        variables: { input: { ...recipeData, creator } },
-      });
+    setFormError('');
 
-      // Success -> go show it on profile
-      console.log('Recipe created:', data.createRecipe);
+    // basic client-side validation
+    if (!recipeData.title.trim()) return setFormError('Title is required.');
+    if (!recipeData.recipeType)   return setFormError('Please select a recipe type.');
+    if (!recipeData.ingredients.trim())  return setFormError('Add at least one ingredient.');
+    if (!recipeData.instructions.trim()) return setFormError('Add at least one instruction.');
+
+    // shape the payload to match the schema
+    const variables = {
+      input: {
+        title: recipeData.title.trim(),
+        description: recipeData.description.trim(),
+        ingredients: toLines(recipeData.ingredients),     // <-- arrays now
+        instructions: toLines(recipeData.instructions),   // <-- arrays now
+        recipeType: recipeData.recipeType,                // value from select
+        imageName: recipeData.imageName,
+        // creator: AuthService.getProfile().data._id,    // usually NOT needed; server should set from JWT
+      },
+    };
+
+    try {
+      // make sure the auth header is present (login first)
+      const isLoggedIn = AuthService.loggedIn?.() || !!localStorage.getItem('id_token');
+      if (!isLoggedIn) return setFormError('Please log in before creating a recipe.');
+
+      const res = await createRecipe({ variables });
+      console.log('Recipe created:', res.data.createRecipe);
       window.location.assign('/profile');
     } catch (err) {
-      console.error('Error creating recipe:', err.message);
+      console.error('Error creating recipe:', err?.graphQLErrors?.[0]?.message || err.message);
+      setFormError('Unable to create recipe');
     }
   };
 
   if (loadingPT) return <p className="tc">Loading...</p>;
-  if (errorPT) return <p className="tc">Error: {errorPT.message}</p>;
+  if (errorPT)   return <p className="tc">Error: {errorPT.message}</p>;
 
   return (
     <div className="form-wrap">
@@ -110,6 +137,7 @@ const CreateRecipe = () => {
               type="text"
               className="input"
               placeholder="e.g., Creamy Pesto Pasta"
+              value={recipeData.title}
               onChange={handleInputChange}
               required
             />
@@ -124,6 +152,7 @@ const CreateRecipe = () => {
               className="textarea"
               rows={4}
               placeholder="Short description of your recipe"
+              value={recipeData.description}
               onChange={handleInputChange}
               required
             />
@@ -137,9 +166,10 @@ const CreateRecipe = () => {
               name="ingredients"
               className="textarea"
               rows={6}
-              placeholder="- 2 cups flour
+              placeholder={`- 2 cups flour
 - 1 tsp salt
-- 3 eggs"
+- 3 eggs`}
+              value={recipeData.ingredients}
               onChange={handleInputChange}
               required
             />
@@ -152,31 +182,30 @@ const CreateRecipe = () => {
               id="instructions"
               name="instructions"
               className="textarea"
-              rows={6}
-              placeholder="1) Mix dry ingredients...
+              rows={8}
+              placeholder={`1) Mix dry ingredients...
 2) Add eggs and knead...
-3) Cook and serve."
+3) Cook and serve.`}
+              value={recipeData.instructions}
               onChange={handleInputChange}
               required
             />
           </div>
 
-          {/* Recipe type */}
+          {/* Recipe type (CONTROLLED) */}
           <div className="field">
             <label htmlFor="recipeType" className="field-label">Recipe Type</label>
             <select
               id="recipeType"
               name="recipeType"
               className="input"
+              value={recipeData.recipeType}
               onChange={handleInputChange}
               required
-              defaultValue=""
             >
-              <option value="" disabled>
-                Select a Recipe Type
-              </option>
+              <option value="" disabled>Select a Recipe Type</option>
               {recipeTypes.map((rt) => (
-                <option key={rt._id} value={rt._id}>
+                <option key={rt._id} value={rt._id /* or rt.name if schema expects enum */}>
                   {rt.name}
                 </option>
               ))}
@@ -185,10 +214,24 @@ const CreateRecipe = () => {
 
           {/* Actions */}
           <div className="form-actions">
-            <button type="submit" className="btn" disabled={loading}>
+            <button
+              type="submit"
+              className="btn"
+              disabled={
+                loading ||
+                !recipeData.title.trim() ||
+                !recipeData.recipeType ||
+                !recipeData.ingredients.trim() ||
+                !recipeData.instructions.trim()
+              }
+            >
               {loading ? 'Submitting…' : 'Submit'}
             </button>
-            {error && <span className="error-text">Error: {error.message}</span>}
+            {(formError || error) && (
+              <span className="error-text">
+                {formError || `Error: ${error.message}`}
+              </span>
+            )}
           </div>
         </form>
       </article>
