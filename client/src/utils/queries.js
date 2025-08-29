@@ -30,7 +30,11 @@ export const GET_USER_CREATED = gql`
     _id
     title
     description
+    ingredients
+    instructions
     imageName
+    recipeType
+    interestedIn { _id }
     }
   }
 `;
@@ -41,10 +45,14 @@ query getUserNotCreated($userId: ID!) {
   _id
   title
   description
+  ingredients
+  instructions
   interestedIn {
     _id
   }
     imageName
+    recipeType 
+    interestedIn { _id }
   }
 }
 `;
@@ -55,7 +63,10 @@ export const GET_USER_INTERESTED = gql`
     _id
     title
     description
+    ingredients
+    instructions
     imageName
+    recipeType
     interestedIn {
     _id
     }

@@ -1,9 +1,10 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import { useQuery } from '@apollo/client';
 import { GET_USER_CREATED, GET_USER_INTERESTED } from '../utils/queries';
-import { jwtDecode } from 'jwt-decode';
 import AuthService from '../utils/auth';
+import RecipeDetails from './RecipeDetails'; // ✅ reuse the modal
 import './Profile.css';
+
 import image1 from '../projectImages/image1.jpg';
 import image2 from '../projectImages/image2.jpg';
 import image3 from '../projectImages/image3.jpg';
@@ -13,89 +14,101 @@ import image6 from '../projectImages/image6.jpeg';
 import image7 from '../projectImages/image7.jpg';
 
 const Profile = () => {
-
   const getImageSource = (imageName) => {
-      const imageMap = {
-        'image1': image1,
-        'image2': image2,
-        'image3': image3,
-        'image4': image4,
-        'image5': image5,
-        'image6': image6,
-        'image7': image7,
-      };
-      return imageMap[imageName] || imageMap['default.png']; // Fallback to a default image if not found
-    };
+    const imageMap = { image1, image2, image3, image4, image5, image6, image7 };
+    return imageMap[imageName] || imageMap.image1;
+  };
 
-    const userId = AuthService.loggedIn() ? AuthService.getProfile().data._id : null;
+  const userId = AuthService.loggedIn() ? AuthService.getProfile().data._id : null;
 
-    const [username, setUsername] = useState('');
-    const [createdRecipes, setCreatedRecipes] = useState([]);
-    const [interestedRecipes, setInterestedRecipes] = useState([]);
-    
-    const { loading: loadingCreated, data: data1 } = useQuery(GET_USER_CREATED, {
-      variables: { userId },
-      skip: !userId,
-    });
+  const [createdRecipes, setCreatedRecipes] = useState([]);
+  const [interestedRecipes, setInterestedRecipes] = useState([]);
+  const [selectedRecipe, setSelectedRecipe] = useState(null);
 
-    const { loading: loadingInterested, data: data2 } = useQuery(GET_USER_INTERESTED, {
-      variables: { userId },
-      skip: !userId,
-    });
+  const { loading: loadingCreated, data: data1 } = useQuery(GET_USER_CREATED, {
+    variables: { userId },
+    skip: !userId,
+  });
 
+  const { loading: loadingInterested, data: data2 } = useQuery(GET_USER_INTERESTED, {
+    variables: { userId },
+    skip: !userId,
+  });
 
-    useEffect(() => {
-      if (data1 && data2) {
-        const { getCreatedRecipes } = data1;
-        const { getInterestedIn } = data2;
-
-        setCreatedRecipes(getCreatedRecipes);
-        setInterestedRecipes(getInterestedIn);
-      }
-    }, [data1, data2]);
-
-    const loading = loadingCreated || loadingInterested;
-
-    if (loading) {
-      return <p>Loading...</p>
+  useEffect(() => {
+    if (data1 && data2) {
+      setCreatedRecipes(data1.getCreatedRecipes || []);
+      setInterestedRecipes(data2.getInterestedIn || []);
     }
+  }, [data1, data2]);
 
-    return (
-      <div className="pa4">
-        <header>
-          <p><h3>These are the recipes you have created, or are interested in:</h3></p>
-        </header>
+  const loading = loadingCreated || loadingInterested;
+  if (loading) return <p>Loading...</p>;
 
-      {/* Recipes Created */}
-      <section>
-        <h2>Recipes Created</h2>
-        <line />
-        <div className="recipe-cards">
-          {createdRecipes.map((recipe, index) => (
-            <div key={index} className="project-card shadow-5">
-              <img src={getImageSource(recipe.imageName)} alt={getImageSource(recipe.imageName)} className='shadow-5' style={{ maxWidth: '200px', maxHeight: '200px' }} />
-              <h3>{recipe.title}</h3>
-              <p>{recipe.description}</p>
-            </div>
-          ))}
-        </div>
+  const renderRecipeCards = (recipes) => (
+    <div className="profile-card-grid">
+      {recipes.map((recipe) => (
+        <article
+          key={recipe._id}
+          className="recipe-card"
+          onClick={() => setSelectedRecipe(recipe)}
+        >
+          <figure className="recipe-card-media">
+            <img
+              src={getImageSource(recipe.imageName)}
+              alt={recipe.title}
+              className="recipe-card-img"
+            />
+          </figure>
+          <div className="recipe-card-body">
+            <h3 className="recipe-card-title">{recipe.title}</h3>
+            <p className="recipe-card-text">{recipe.description}</p>
+          </div>
+        </article>
+      ))}
+    </div>
+  );
+
+  return (
+    <div className="pa4">
+      <header className="mb4">
+        <h2 className="fw7 f3">Your recipes & saves</h2>
+        <p className="gray">These are the recipes you’ve created, and the ones you’re interested in.</p>
+      </header>
+
+      {/* Created */}
+      <section className="mb5">
+        <h3 className="fw6 f4 mb3">Recipes Created</h3>
+        {createdRecipes.length > 0 ? (
+          renderRecipeCards(createdRecipes)
+        ) : (
+          <p className="gray bg-light-gray pa3 br2">
+            No created recipes yet. Try adding one from the Create page!
+          </p>
+        )}
       </section>
 
-      {/* Recipes Interested In */}
+      {/* Interested */}
       <section>
-        <h2>Recipes Interested In</h2>
-        <div className="recipe-cards"></div>
-        {interestedRecipes.map((recipe, index) => (
-          <div key={index} className="project-card shadow-5">
-              <img src={getImageSource(recipe.imageName)} alt={getImageSource(recipe.imageName)} className='shadow-5' style={{ maxWidth: '200px', maxHeight: '200px' }} />
-              <h3>{recipe.title}</h3>
-              <p>{recipe.description}</p>
-            </div>
-        ))}
+        <h3 className="fw6 f4 mb3">Recipes Interested In</h3>
+        {interestedRecipes.length > 0 ? (
+          renderRecipeCards(interestedRecipes)
+        ) : (
+          <p className="gray bg-light-gray pa3 br2">
+            You haven’t marked any recipes as Interested yet.
+          </p>
+        )}
       </section>
 
-      </div>
-    );   
+      {/* Modal */}
+      {selectedRecipe && (
+        <RecipeDetails
+          recipe={selectedRecipe}
+          closeModal={() => setSelectedRecipe(null)}
+        />
+      )}
+    </div>
+  );
 };
 
 export default Profile;
