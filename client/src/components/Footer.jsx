@@ -4,9 +4,11 @@ import './Footer.css';
 
 const Footer = () => {
   return (
-    <div className="footer pa3  tc white">
-      <p>Recipe Sharing Hub 2025 &copy;</p>
-    </div>
+    <footer className="footer">
+      <p className="footer-text">
+        &copy; {new Date().getFullYear()} Recipe Sharing Hub. All rights reserved.
+      </p>
+    </footer>
   );
 };
 
