@@ -1,6 +1,6 @@
 // server/schemas/resolvers.js
 const { User, Recipe, RecipeType } = require('../models');
-const { AuthenticationError } = require('../utils/auth'); // your helper wraps/exports the error
+const { AuthenticationError } = require('../utils/auth');
 const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
 
@@ -10,14 +10,6 @@ const expiration = '2h';
 const signToken = ({ username, email, _id }) => {
   const payload = { username, email, _id };
   return jwt.sign({ data: payload }, secret, { expiresIn: expiration });
-};
-
-const toLines = (x) => {
-  if (Array.isArray(x)) return x.map(String).map(s => s.trim()).filter(Boolean);
-  return String(x || '')
-    .split(/\r?\n/)
-    .map(s => s.trim())
-    .filter(Boolean);
 };
 
 const resolvers = {
@@ -51,35 +43,32 @@ const resolvers = {
   },
 
   Mutation: {
-    // expects args: { input: { title, description, ingredients, instructions, recipeType, ... } }
+    // expects args: { input: { title, description, ingredients (String), instructions (String), recipeType, imageName } }
     createRecipe: async (_, { input }, context) => {
       try {
-        // require auth and stamp creator
+        // require auth and stamp creator from token
         if (!context.user?._id) {
           throw new AuthenticationError('You need to be logged in');
         }
 
-        // normalize arrays from textarea strings, enforce minimally required fields
-        const ingredients = toLines(input.ingredients);
-        const instructions = toLines(input.instructions);
+        const title = (input?.title || '').trim();
+        const description = (input?.description || '').trim();
+        const ingredients = String(input?.ingredients ?? '').trim();   // <-- keep as String
+        const instructions = String(input?.instructions ?? '').trim(); // <-- keep as String
 
-        if (!input?.title?.trim()) {
-          throw new Error('Title is required');
-        }
-        if (!ingredients.length) {
-          throw new Error('At least one ingredient is required');
-        }
-        if (!instructions.length) {
-          throw new Error('At least one instruction is required');
-        }
+        if (!title) throw new Error('Title is required');
+        if (!ingredients) throw new Error('At least one ingredient is required');
+        if (!instructions) throw new Error('At least one instruction is required');
+        if (!input?.recipeType) throw new Error('Recipe type is required');
 
         const doc = await Recipe.create({
-          ...input,
-          title: input.title.trim(),
-          description: (input.description || '').trim(),
-          ingredients,
-          instructions,
-          creator: context.user._id, // ensure ownership
+          title,
+          description,
+          ingredients,   // String
+          instructions,  // String
+          recipeType: input.recipeType, // Mongoose will cast string _id to ObjectId
+          imageName: input.imageName,
+          creator: context.user._id,    // authoritative creator from JWT
         });
 
         return doc;
@@ -89,6 +78,7 @@ const resolvers = {
           message: error.message,
           name: error.name,
           code: error.code,
+          errors: error.errors,
           stack: error.stack,
         });
         throw new Error('Unable to create recipe');
@@ -139,7 +129,7 @@ const resolvers = {
   },
 
   Recipe: {
-    // fix typo: parent.interestedIn (not interetestedIn)
+    // fix typo: use parent.interestedIn
     interestedIn: async (parent) => {
       const ids = parent.interestedIn || [];
       return await User.find({ _id: { $in: ids } });
