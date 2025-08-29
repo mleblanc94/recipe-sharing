@@ -2,29 +2,32 @@
   "name": "recipe-sharing-page",
   "version": "1.0.0",
   "private": true,
-  "main": "index.js",
   "scripts": {
     "start": "node server/server.js",
     "develop": "concurrently \"npm --prefix server run watch\" \"npm --prefix client run dev\"",
     "bootstrap": "npm --prefix server install && npm --prefix client install",
     "build": "npm --prefix client run build",
     "seed": "npm --prefix server run seed",
-    "heroku-postbuild": "npm --prefix client run build",
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm --prefix client install && npm --prefix client run build",
     "render-build": "npm run bootstrap && npm run build"
+  },
+  "engines": {
+    "node": "20.x",
+    "npm": "10.x"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"
   },
   "dependencies": {
     "@apollo/client": "^3.8.8",
-    "@vitejs/plugin-react": "^4.2.1",
+    "@apollo/server": "^5.0.0",
     "bcrypt": "^5.0.0",
+    "cors": "^2.8.5",
     "express": "^4.18.2",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.0.3",
     "nodemon": "^3.0.2",
     "react-router-dom": "^6.20.1",
-    "tachyons": "^4.12.0",
-    "vite": "^5.0.7"
+    "tachyons": "^4.12.0"
   }
 }
