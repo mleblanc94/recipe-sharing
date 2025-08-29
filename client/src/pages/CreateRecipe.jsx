@@ -25,19 +25,12 @@ const images = [
   { name: 'image7', src: image7, alt: 'Recipe image 7' },
 ];
 
-// turn a textarea into an array of lines (strip leading "- " and blanks)
-const toLines = (s) =>
-  String(s || '')
-    .split(/\r?\n/)
-    .map(t => t.replace(/^\s*-\s*/, '').trim())
-    .filter(Boolean);
-
 const CreateRecipe = () => {
   const [recipeData, setRecipeData] = useState({
     title: '',
     description: '',
-    ingredients: '',     // textareas as strings in state
-    instructions: '',
+    ingredients: '',     // keep as string (textarea)
+    instructions: '',    // keep as string (textarea)
     recipeType: '',      // select value (ObjectId or enum string)
     imageName: 'image1',
   });
@@ -67,22 +60,25 @@ const CreateRecipe = () => {
     if (!recipeData.ingredients.trim())  return setFormError('Add at least one ingredient.');
     if (!recipeData.instructions.trim()) return setFormError('Add at least one instruction.');
 
-    // shape the payload to match the schema
+    // REQUIRED by your schema
+    const creator = AuthService.getProfile().data._id;
+
+    // shape the payload to match the schema (strings + creator)
     const variables = {
       input: {
         title: recipeData.title.trim(),
         description: recipeData.description.trim(),
-        ingredients: toLines(recipeData.ingredients),     // <-- arrays now
-        instructions: toLines(recipeData.instructions),   // <-- arrays now
-        recipeType: recipeData.recipeType,                // value from select
+        ingredients: recipeData.ingredients,     // send as string
+        instructions: recipeData.instructions,   // send as string
+        recipeType: recipeData.recipeType,       // value from select
         imageName: recipeData.imageName,
-        // creator: AuthService.getProfile().data._id,    // usually NOT needed; server should set from JWT
+        creator,                                 // required
       },
     };
 
     try {
       // make sure the auth header is present (login first)
-      const isLoggedIn = AuthService.loggedIn?.() || !!localStorage.getItem('id_token');
+      const isLoggedIn = (AuthService.loggedIn && AuthService.loggedIn()) || !!localStorage.getItem('id_token');
       if (!isLoggedIn) return setFormError('Please log in before creating a recipe.');
 
       const res = await createRecipe({ variables });
