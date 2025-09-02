@@ -1,65 +1,58 @@
 // server/server.js
 require('dotenv').config();
-
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
-
 const { ApolloServer } = require('@apollo/server');
 const { expressMiddleware } = require('@apollo/server/express4');
-
 const { authMiddleware } = require('./utils/auth');
 const { typeDefs, resolvers } = require('./schemas');
-const db = require('./config/connection'); // this should call mongoose.connect(...)
+const db = require('./config/connection');
 
 const PORT = process.env.PORT || 3001;
 
+// allowlist for CORS
+const FRONTEND_ORIGINS = [
+  'http://localhost:5173',
+  'http://localhost:3000',
+  process.env.FRONTEND_ORIGIN  // e.g. https://recipe-sharing-hub-97ef44b34b8f.herokuapp.com
+].filter(Boolean);
+
 async function start() {
-  // --- create express app
   const app = express();
 
-  // --- CORS: allow your Vite dev origin(s)
-  app.use(
-    cors({
-      origin: ['http://localhost:5173', 'http://localhost:3000'], // add others if needed
-      credentials: true, // set to true only if you will use cookies
-    })
-  );
+  app.use(cors({
+    origin(origin, cb) {
+      // allow same-origin/no-origin (SSR, curl, etc.)
+      if (!origin) return cb(null, true);
+      if (FRONTEND_ORIGINS.includes(origin)) return cb(null, true);
+      return cb(new Error(`CORS blocked: ${origin}`));
+    },
+    credentials: true,
+  }));
 
-  // --- body parsers
   app.use(express.urlencoded({ extended: true }));
   app.use(express.json());
 
-  // --- Apollo
-  const server = new ApolloServer({
-    typeDefs,
-    resolvers,
-  });
+  const server = new ApolloServer({ typeDefs, resolvers });
   await server.start();
 
-  app.use(
-    '/graphql',
-    expressMiddleware(server, {
-      context: authMiddleware,
-    })
-  );
+  app.use('/graphql', expressMiddleware(server, { context: authMiddleware }));
 
-  // --- static assets (images)
+  // static assets
   app.use('/images', express.static(path.join(__dirname, '../client/images')));
 
-  // --- production: serve built client
   if (process.env.NODE_ENV === 'production') {
-    app.use(express.static(path.join(__dirname, '../client/dist')));
-    app.get('*', (_req, res) => {
-      res.sendFile(path.join(__dirname, '../client/dist/index.html'));
-    });
+    const dist = path.join(__dirname, '../client/dist');
+    app.use(express.static(dist));
+    app.get('*', (_req, res) => res.sendFile(path.join(dist, 'index.html')));
   }
 
-  // --- start only after Mongo is connected
   db.once('open', () => {
     app.listen(PORT, () => {
-      console.log(`API Server running on port ${PORT}`);
-      console.log(`Use GraphQL at http://localhost:${PORT}/graphql`);
+      console.log(`API Server on ${PORT}`);
+      console.log(`GraphQL: /graphql`);
+      console.log(`CORS allowlist:`, FRONTEND_ORIGINS);
     });
   });
 }

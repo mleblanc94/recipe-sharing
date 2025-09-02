@@ -1,4 +1,13 @@
 .footer {
-    background-color: #d9d9d9;
-    color: black;
+  background-color: #1f2937;   /* Dark gray (tailwind's gray-800) */
+  padding: 1rem 0;             /* Top & bottom padding */
+  border-top: 1px solid #374151; /* Subtle top border */
+  text-align: center;
+}
+
+.footer-text {
+  color: black;   /* Light gray text */
+  font-size: 0.9rem;
+  margin: 0;
+  letter-spacing: 0.3px;
 }

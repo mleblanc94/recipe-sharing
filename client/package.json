@@ -1,5 +1,5 @@
 {
-  "name": "recipe-sharing-page",
+  "name": "recipe-sharing-page-client",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -16,7 +16,6 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-router-dom": "^7.3.0",
-    "recipe-sharing-page": "file:..",
     "tachyons": "^4.12.0"
   },
   "devDependencies": {
