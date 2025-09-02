@@ -4,7 +4,10 @@ import { useMutation } from '@apollo/client';
 import { LOGIN_USER } from '../utils/mutations';
 import Auth from '../utils/auth';
 import 'tachyons';
-import './Signup.css'; // reuse the same auth-* styles
+import './Signup.css';
+
+const GUEST_EMAIL = 'guest@gmail.com';
+const GUEST_PASSWORD = 'Guest';
 
 const Signin = () => {
   const navigate = useNavigate();
@@ -30,6 +33,21 @@ const Signin = () => {
     } catch (e) {
       console.error(e);
       setUiError('Invalid email or password. Please try again.');
+    }
+  };
+
+  // One-click guest login
+  const handleGuestLogin = async () => {
+    setUiError('');
+    try {
+      const { data } = await login({
+        variables: { email: GUEST_EMAIL, password: GUEST_PASSWORD },
+      });
+      Auth.login(data.login.token);
+      navigate('/', { replace: true });
+    } catch (e) {
+      console.error(e);
+      setUiError('Guest login is temporarily unavailable. Please try again.');
     }
   };
 
@@ -89,6 +107,18 @@ const Signin = () => {
             {loading ? 'Logging in…' : 'Login'}
           </button>
         </form>
+
+        {/* Divider + guest option */}
+        <div className="tc mv3 o-60">— or —</div>
+        <button
+          className="auth-btn"
+          type="button"
+          onClick={handleGuestLogin}
+          disabled={loading}
+          aria-label="Continue as Guest"
+        >
+          {loading ? 'Please wait…' : 'Continue as Guest'}
+        </button>
 
         <p className="auth-footnote">
           Don’t have an account?{' '}
