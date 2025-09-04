@@ -11,6 +11,8 @@ export const GET_ALL_RECIPES = gql`
           recipeType
           imageName
           interestedIn { _id }
+          votes { up down score }
+          myVote
         }
     }
 `;
@@ -35,6 +37,8 @@ export const GET_USER_CREATED = gql`
     imageName
     recipeType
     interestedIn { _id }
+    votes { up down score }
+    myVote
     }
   }
 `;
@@ -53,6 +57,8 @@ query getUserNotCreated($userId: ID!) {
     imageName
     recipeType 
     interestedIn { _id }
+    votes { up down score }
+    myVote
   }
 }
 `;

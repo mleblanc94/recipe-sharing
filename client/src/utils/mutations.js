@@ -53,14 +53,12 @@ interestedIn {
 }
 `;
 
-export const UPDATE_THUMBS = gql`
-mutation updateThumbs($recipeId: ID!, $thumb: Int!, $userId: ID!) {
-updateThumbs(recipeId: $recipeId, thumb: $thumb, userId: $userId) {
+export const VOTE_ON_RECIPE = gql`
+mutation VoteOnRecipe($recipeId: ID!, $value: Int!) {
+    voteOnRecipe(recipeId: $recipeId, value: $value) {
 _id
-thumb
-usersVoted {
-    _id
-}
+myVote
+votes { up down score }
 }
 }
 `;

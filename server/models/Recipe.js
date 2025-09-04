@@ -39,6 +39,15 @@ const recipeSchema = new Schema({
         type: Date,
         default: Date.now
     },
+    voters: {
+        type: [
+            {
+                user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+                value: { type: Number, enum: [-1, 1], required: true } // 1 = upvote, -1 = downvote
+            }
+        ],
+        default: []
+    }
 });
 
 const Recipe = model('Recipe', recipeSchema);

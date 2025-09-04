@@ -22,6 +22,12 @@ const typeDefs = gql`
     _id: ID!
     }
 
+    type RecipeVotes {
+    up: Int!
+    down: Int!
+    score: Int!
+    }
+
     type Recipe {
     _id: ID!
     title: String!
@@ -33,6 +39,8 @@ const typeDefs = gql`
     recipeType: String!
     createdAt: String
     imageName: String
+    votes: RecipeVotes!
+    myVote: Int!
     }
 
     type User {
@@ -66,6 +74,7 @@ const typeDefs = gql`
     createUser(username: String!, email: String!, password: String!): Auth
     addToInterestedIn(recipeId: ID!, userId: ID!): Recipe
     login(email: String!, password: String!): Auth
+    voteOnRecipe(recipeId: ID!, value: Int!): Recipe!
     }
 `;
 
