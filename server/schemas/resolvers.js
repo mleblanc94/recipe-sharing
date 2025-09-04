@@ -104,6 +104,39 @@ const resolvers = {
       }
     },
 
+    voteOnRecipe: async (_, { recipeId, value }, context) => {
+  if (!context.user?._id) {
+    throw new AuthenticationError('You need to be logged in');
+  }
+  if (![1, -1, 0].includes(value)) {
+    throw new Error('value must be 1, -1, or 0');
+  }
+
+  const recipe = await Recipe.findById(recipeId);
+  if (!recipe) throw new Error('Recipe not found');
+
+  const uid = context.user._id.toString();
+  const idx = (recipe.voters || []).findIndex(v => v.user.toString() === uid);
+  const current = idx >= 0 ? recipe.voters[idx].value : 0;
+
+  // toggle: clicking same value turns it off (0)
+  const next = (value === current) ? 0 : value;
+
+  if (idx >= 0) {
+    if (next === 0) {
+      recipe.voters.splice(idx, 1);
+    } else {
+      recipe.voters[idx].value = next;
+    }
+  } else if (next !== 0) {
+    recipe.voters.push({ user: uid, value: next });
+  }
+
+  await recipe.save();
+  return recipe; // field resolvers below will compute votes & myVote
+},
+
+
     addToInterestedIn: async (_, { recipeId, userId }) => {
       try {
         const recipe = await Recipe.findByIdAndUpdate(
@@ -129,12 +162,31 @@ const resolvers = {
   },
 
   Recipe: {
-    // fix typo: use parent.interestedIn
-    interestedIn: async (parent) => {
-      const ids = parent.interestedIn || [];
-      return await User.find({ _id: { $in: ids } });
-    },
+  // existing
+  interestedIn: async (parent) => {
+    const ids = parent.interestedIn || [];
+    return await User.find({ _id: { $in: ids } });
   },
-};
+
+  // NEW: never returns null
+  votes(parent) {
+    const voters = parent.voters || [];
+    let up = 0, down = 0;
+    for (const v of voters) {
+      if (v.value === 1) up += 1;
+      else if (v.value === -1) down += 1;
+    }
+    return { up, down, score: up - down };
+  },
+
+  // NEW: never returns null (returns 0 if not logged in or no vote)
+  myVote(parent, _args, context) {
+    const uid = context.user?._id?.toString();
+    if (!uid) return 0;
+    const entry = (parent.voters || []).find(v => v.user?.toString?.() === uid);
+    return entry ? entry.value : 0;
+  },
+},
+}
 
 module.exports = resolvers;

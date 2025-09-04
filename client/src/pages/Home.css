@@ -387,8 +387,54 @@ form {
   background: #fafafa;
 }
 
-/* Card/grid styles already exist in Home.css:
-   .card-grid, .card, .card-media, .card-img, .card-body, .card-title, .card-text
-   If you don’t have them in scope here, keep this comment just as a reminder. */
+/* Card as flex column & taller so nothing overlaps */
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 470px; /* extend card length */
+}
 
+/* Row 1: buttons (at the bottom) */
+.card-actions {
+  margin-top: auto;
+  display: flex;
+  justify-content: flex-start;
+  padding: 0 1rem .5rem;
+}
+.btn-group { display: inline-flex; gap: .5rem; }
 
+/* Row 2: votes (directly under buttons, inside the card) */
+.card-votes {
+  display: flex;
+  justify-content: flex-end; /* align under Interested */
+  padding: 0 1rem 1rem;
+}
+
+/* Vote pill (no absolute positioning) */
+.vote-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  padding: .2rem .45rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: 0 3px 8px rgba(0,0,0,.06);
+}
+
+/* Tiny icon buttons + score */
+.btn-icon {
+  width: 24px; height: 24px; padding: 0;
+  border: none; background: transparent; border-radius: 999px;
+  line-height: 24px; font-size: 13px; cursor: pointer;
+}
+.btn-icon:hover { background: #f3f4f6; }
+.btn-icon.active { background: #eef2ff; }
+
+.vote-score {
+  min-width: 1.5ch;
+  text-align: center;
+  font-weight: 700;
+  font-size: 12px;
+}
