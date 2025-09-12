@@ -24,7 +24,9 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "concurrently": "^8.2.2"
+    "@testing-library/cypress": "^10.1.0",
+    "concurrently": "^8.2.2",
+    "cypress": "^15.2.0"
   },
   "dependencies": {
     "@vitejs/plugin-react": "^4.3.1",
