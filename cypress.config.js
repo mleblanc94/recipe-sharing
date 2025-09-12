@@ -12,9 +12,5 @@ module.exports = defineConfig({
       runMode: 1,
       openMode: 0
     }
-  },
-  env: {
-    TEST_EMAIL: 'leblancmichael94@gmail.com',
-    TEST_PASSWORD: 'Garfield20$'
   }
 })
