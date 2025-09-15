@@ -21,8 +21,10 @@ const Navigation = () => {
     Auth.logout();
   };
 
-  const NavLink = ({ to, children }) => (
-    <Link to={to} className={`nav-link ${isCurrentPage(to) ? 'active' : ''}`}>
+  const NavLink = ({ to, children, className = '', ...props }) => (
+    <Link to={to}
+    {...props}
+    className={`nav-link ${isCurrentPage(to) ? 'active' : ''} ${className}`}>
       {children}
     </Link>
   );
@@ -41,9 +43,9 @@ const Navigation = () => {
         <div className="nav-actions">
           {Auth.loggedIn() ? (
             <>
-              <NavLink to="/">Home</NavLink>
-              <NavLink to="/create">Create</NavLink>
-              <NavLink to="/profile">Profile</NavLink>
+              <NavLink to="/" data-testid="nav-home">Home</NavLink>
+              <NavLink to="/create" data-testid="nav-create">Create</NavLink>
+              <NavLink to="/profile" data-testid="nav-profile">Profile</NavLink>
               <button className="btn logout" onClick={logout}>Logout</button>
             </>
           ) : (
