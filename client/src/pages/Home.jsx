@@ -37,7 +37,7 @@ const Home = () => {
 
   const { loading, error, data } = useQuery(GET_ALL_RECIPES, { skip: !isLoggedIn });
   const [addInterestedIn] = useMutation(ADD_INTERESTED_USER);
-  const [voteOnRecipe] = useMutation(VOTE_ON_RECIPE); // <-- NEW
+  const [voteOnRecipe] = useMutation(VOTE_ON_RECIPE);
 
   if (!isLoggedIn) return null;
   if (loading) return <p>Loading page...</p>;
@@ -63,7 +63,7 @@ const Home = () => {
     }
   };
 
-  // NEW: vote handler with optimistic UI
+  // vote handler
   const handleVote = async (e, recipe, value) => {
     e.stopPropagation();
     // Toggle off if clicking the same value again
@@ -196,7 +196,7 @@ const Home = () => {
             </div>
           </div>
 
-          {/* Row 2: votes (right-aligned) */}
+          {votes (right-aligned)}
           <div className="card-votes">
             {renderVotes(recipe)}
           </div>
