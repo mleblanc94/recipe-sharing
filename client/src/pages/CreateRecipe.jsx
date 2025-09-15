@@ -60,7 +60,7 @@ const CreateRecipe = () => {
     if (!recipeData.ingredients.trim())  return setFormError('Add at least one ingredient.');
     if (!recipeData.instructions.trim()) return setFormError('Add at least one instruction.');
 
-    // REQUIRED by your schema
+    // REQUIRED by schema
     const creator = AuthService.getProfile().data._id;
 
     // shape the payload to match the schema (strings + creator)
