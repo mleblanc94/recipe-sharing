@@ -196,7 +196,6 @@ const Home = () => {
             </div>
           </div>
 
-          {votes (right-aligned)}
           <div className="card-votes">
             {renderVotes(recipe)}
           </div>
