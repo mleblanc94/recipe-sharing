@@ -168,7 +168,7 @@ const resolvers = {
     return await User.find({ _id: { $in: ids } });
   },
 
-  // NEW: never returns null
+  // Never returns null
   votes(parent) {
     const voters = parent.voters || [];
     let up = 0, down = 0;
@@ -179,7 +179,7 @@ const resolvers = {
     return { up, down, score: up - down };
   },
 
-  // NEW: never returns null (returns 0 if not logged in or no vote)
+  // Never returns null (returns 0 if not logged in or no vote)
   myVote(parent, _args, context) {
     const uid = context.user?._id?.toString();
     if (!uid) return 0;
