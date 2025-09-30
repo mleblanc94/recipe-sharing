@@ -62,3 +62,36 @@ votes { up down score }
 }
 }
 `;
+
+export const DELETE_RECIPE = gql`
+  mutation DeleteRecipe($recipeId: ID!) {
+    deleteRecipe(recipeId: $recipeId) {
+      _id
+      success
+      message
+    }
+  }
+`;
+
+export const REMOVE_FROM_INTERESTED = gql`
+  mutation RemoveFromInterestedIn($recipeId: ID!, $userId: ID!) {
+    removeFromInterestedIn(recipeId: $recipeId, userId: $userId) {
+      _id
+      interestedIn { _id }
+    }
+  }
+`;
+
+export const UPDATE_RECIPE = gql`
+  mutation UpdateRecipe($recipeId: ID!, $input: RecipeInput!) {
+    updateRecipe(recipeId: $recipeId, input: $input) {
+      _id
+      title
+      description
+      ingredients
+      instructions
+      recipeType
+      imageName
+    }
+  }
+`;

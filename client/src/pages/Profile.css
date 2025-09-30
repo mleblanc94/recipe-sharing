@@ -45,3 +45,55 @@
 .recipe-card-body { padding: 0.25rem; }
 .recipe-card-title { margin: 0 0 6px; font-weight: 700; }
 .recipe-card-text  { margin: 0; color: #374151; font-size: .95rem; line-height: 1.35; }
+
+.recipe-card {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.recipe-card-media img {
+  display: block;
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+.card-actions {
+  position: absolute;
+  inset: auto 0 0 0;           /* bottom overlay */
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  padding: 8px 10px;
+  background: linear-gradient(to top, rgba(0,0,0,0.55), rgba(0,0,0,0));
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .2s ease;
+}
+
+.recipe-card:hover .card-actions {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.action-btn {
+  border: none;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: #ffffff;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.action-btn:hover {
+  filter: brightness(0.95);
+}
+
+.action-btn.danger {
+  background: #ffe8e8;
+  color: #a40000;
+}
+
