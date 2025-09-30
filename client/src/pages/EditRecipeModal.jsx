@@ -1,6 +1,6 @@
 // client/src/pages/EditRecipeModal.jsx
 import React, { useState, useEffect } from 'react';
-import { useMutation } from '@apollo/client';
+import { useMutation, gql } from '@apollo/client';
 import { UPDATE_RECIPE } from '../utils/mutations';
 
 const EditRecipeModal = ({ recipe, onClose, onSaved }) => {
@@ -18,17 +18,35 @@ const EditRecipeModal = ({ recipe, onClose, onSaved }) => {
     setForm({
       title: recipe.title || '',
       description: recipe.description || '',
-      ingredients: Array.isArray(recipe.ingredients) ? recipe.ingredients.join('\n') : recipe.ingredients || '',
-      instructions: Array.isArray(recipe.instructions) ? recipe.instructions.join('\n') : recipe.instructions || '',
+      ingredients: recipe.ingredients || '',
+      instructions: recipe.instructions || '',
       recipeType: recipe.recipeType || '',
       imageName: recipe.imageName || 'image1',
     });
   }, [recipe]);
 
   const [updateRecipe, { loading }] = useMutation(UPDATE_RECIPE, {
-    onCompleted: (res) => {
-      onSaved?.(res.updateRecipe);
-      onClose();
+    // Write the returned fields into the Recipe entity in cache
+    update(cache, { data: { updateRecipe: updated } }) {
+      cache.writeFragment({
+        id: cache.identify({ __typename: 'Recipe', _id: updated._id }),
+        fragment: gql`
+          fragment UpdatedRecipeFields on Recipe {
+            title
+            description
+            ingredients
+            instructions
+            recipeType
+            imageName
+          }
+        `,
+        data: updated,
+      });
+    },
+    onCompleted: ({ updateRecipe: updated }) => {
+      // Let parent update its local state (createdRecipes list) immediately
+      onSaved?.(updated);
+      onClose?.();
     },
   });
 
@@ -39,16 +57,38 @@ const EditRecipeModal = ({ recipe, onClose, onSaved }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
     const input = {
       title: form.title.trim(),
       description: form.description.trim(),
-      // Convert multi-line text back into arrays if your schema expects arrays
-      ingredients: form.ingredients.split('\n').map(s => s.trim()).filter(Boolean),
-      instructions: form.instructions.split('\n').map(s => s.trim()).filter(Boolean),
+      ingredients: form.ingredients,   // keep as single string
+      instructions: form.instructions, // keep as single string
       recipeType: form.recipeType,
       imageName: form.imageName,
     };
-    updateRecipe({ variables: { recipeId: recipe._id, input } });
+
+    updateRecipe({
+      variables: { recipeId: recipe._id, input },
+      // Instant UI: assume success and write the new fields right away
+      optimisticResponse: {
+        updateRecipe: {
+          __typename: 'Recipe',
+          _id: recipe._id,
+          title: input.title || recipe.title,
+          description: input.description || recipe.description,
+          ingredients: input.ingredients ?? recipe.ingredients,
+          instructions: input.instructions ?? recipe.instructions,
+          recipeType: input.recipeType ?? recipe.recipeType,
+          imageName: input.imageName ?? recipe.imageName,
+          // include fields that other components might read (safe to keep existing ones)
+          myVote: recipe.myVote ?? 0,
+          votes: recipe.votes ?? { __typename: 'RecipeVotes', up: 0, down: 0, score: 0 },
+          creator: recipe.creator,        // preserve relations
+          interestedIn: recipe.interestedIn,
+          createdAt: recipe.createdAt,
+        },
+      },
+    });
   };
 
   return (
@@ -71,12 +111,12 @@ const EditRecipeModal = ({ recipe, onClose, onSaved }) => {
           </label>
 
           <label className="db mb2">
-            <span className="db mb1">Ingredients (one per line)</span>
+            <span className="db mb1">Ingredients (text)</span>
             <textarea name="ingredients" value={form.ingredients} onChange={handleChange} rows={5} />
           </label>
 
           <label className="db mb2">
-            <span className="db mb1">Instructions (one step per line)</span>
+            <span className="db mb1">Instructions (text)</span>
             <textarea name="instructions" value={form.instructions} onChange={handleChange} rows={6} />
           </label>
 

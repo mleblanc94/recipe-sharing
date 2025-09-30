@@ -83,7 +83,7 @@ export const REMOVE_FROM_INTERESTED = gql`
 `;
 
 export const UPDATE_RECIPE = gql`
-  mutation UpdateRecipe($recipeId: ID!, $input: RecipeInput!) {
+  mutation UpdateRecipe($recipeId: ID!, $input: RecipeUpdateInput!) {
     updateRecipe(recipeId: $recipeId, input: $input) {
       _id
       title

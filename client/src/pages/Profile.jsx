@@ -43,8 +43,30 @@ const Profile = () => {
   });
 
   const [deleteRecipe] = useMutation(DELETE_RECIPE, {
-    onCompleted: () => refetchCreated(),
-  });
+  update(cache, _result, { variables }) {
+    const id = variables.recipeId;
+
+    // Remove from list fields you render elsewhere (Home, etc.)
+    cache.modify({
+      fields: {
+        getAllRecipes(existingRefs = [], { readField }) {
+          return existingRefs.filter(ref => readField('_id', ref) !== id);
+        },
+        getCreatedRecipes(existingRefs = [], { readField }) {
+          return existingRefs.filter(ref => readField('_id', ref) !== id);
+        },
+        getNotCreatedRecipes(existingRefs = [], { readField }) {
+          return existingRefs.filter(ref => readField('_id', ref) !== id);
+        },
+      },
+    });
+
+    // Evict the individual Recipe entity and garbage-collect
+    cache.evict({ id: cache.identify({ __typename: 'Recipe', _id: id }) });
+    cache.gc();
+  },
+});
+
 
   const [removeFromInterested] = useMutation(REMOVE_FROM_INTERESTED, {
     onCompleted: () => refetchInterested(),
