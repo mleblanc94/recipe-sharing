@@ -25,12 +25,13 @@
 .card:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(0,0,0,.12); }
 
 /* Image constrained */
-.card-media { width: 100%; height: 180px; overflow: hidden; background: #f3f4f6; }
+.card-media { width: 100%; height: 180px; overflow: hidden; background: #f3f4f6; margin: 0;}
 .card-img {
   width: 100%;
   height: 100%;
-  object-fit: cover;           /* <-- keeps images nicely cropped */
+  object-fit: cover;        
   display: block;
+  object-position: center;
 }
 
 /* Body */
@@ -438,3 +439,66 @@ form {
   font-weight: 700;
   font-size: 12px;
 }
+
+/* === Edit modal look & layout === */
+.edit-modal { overflow: hidden; }
+.edit-header { border-bottom: 1px solid #e5e7eb; }
+
+.edit-grid {
+  display: grid;
+  gap: 1rem;
+  padding: 1rem 1.2rem 1.25rem;
+  grid-template-columns: 1fr;
+}
+@media (min-width: 720px) {
+  .edit-grid { grid-template-columns: 1.1fr 1.4fr; }
+}
+
+/* Left side preview */
+.edit-media {
+  margin: 0;
+  background: #f8fafc;
+  border-radius: 12px;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  padding: .75rem;
+}
+.edit-media img {
+  width: 100%;
+  height: 100%;
+  max-height: 420px;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 10px;
+  box-shadow: 0 6px 18px rgba(0,0,0,.08);
+}
+.edit-media-cap {
+  margin-top: .5rem;
+  color: #6b7280;
+  font-size: .85rem;
+}
+
+/* Right side form */
+.edit-form { padding: .25rem .25rem 0; }
+.field { margin: .8rem 0 1rem; }
+.field-label { display: block; font-weight: 700; margin: 0 0 .4rem; }
+.hint { display:block; color:#6b7280; margin-top:.35rem; }
+
+/* Sticky action bar */
+.edit-actions {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  gap: .6rem;
+  justify-content: flex-end;
+  padding: .75rem 0 0;
+  background:
+    linear-gradient(to top, rgba(255,255,255,1), rgba(255,255,255,0.65) 60%, transparent);
+}
+
+/* Buttons – reuse existing .btn / .btn-outline */
+.btn { background:#6b8dfc; }
+.btn-outline { background:transparent; border:1px solid #cbd5e1; color:#111827; }
+.btn:hover { filter: brightness(.95); }
+
