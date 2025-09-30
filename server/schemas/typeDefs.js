@@ -1,14 +1,13 @@
 const { gql } = require('apollo-server-express');
 
 const typeDefs = gql`
-
-    type RecipeType {
+  type RecipeType {
     _id: ID!
     name: String!
     description: String
-    }
+  }
 
-    input RecipeInput {
+  input RecipeInput {
     title: String!
     description: String!
     ingredients: String
@@ -16,19 +15,29 @@ const typeDefs = gql`
     creator: String!
     recipeType: String!
     imageName: String
-    }
+  }
 
-    type Creator {
+  # NEW: for partial updates (no creator required)
+  input RecipeUpdateInput {
+    title: String
+    description: String
+    ingredients: String
+    instructions: String
+    recipeType: String
+    imageName: String
+  }
+
+  type Creator {
     _id: ID!
-    }
+  }
 
-    type RecipeVotes {
+  type RecipeVotes {
     up: Int!
     down: Int!
     score: Int!
-    }
+  }
 
-    type Recipe {
+  type Recipe {
     _id: ID!
     title: String!
     description: String!
@@ -41,41 +50,50 @@ const typeDefs = gql`
     imageName: String
     votes: RecipeVotes!
     myVote: Int!
-    }
+  }
 
-    type User {
+  type User {
     _id: ID!
     username: String!
     email: String!
     password: String!
-    }
+  }
 
-    type UserInput {
+  type UserInput {
     username: String!
     email: String!
     password: String!
-    }
+  }
 
-    type Auth {
+  type Auth {
     token: ID!
     user: User
-    }
+  }
 
-    type Query {
-        getAllRecipes: [Recipe]
-        getInterestedIn(interestedIn: ID!): [Recipe]
-        getCreatedRecipes(creator: ID!): [Recipe]
-        getNotCreatedRecipes(creator: ID!): [Recipe]
-        getAllRecipeTypes: [RecipeType]
-    }
+  type DeleteResult {
+    _id: ID!
+    success: Boolean!
+    message: String
+  }
 
-    type Mutation {
+  type Query {
+    getAllRecipes: [Recipe]
+    getInterestedIn(interestedIn: ID!): [Recipe]
+    getCreatedRecipes(creator: ID!): [Recipe]
+    getNotCreatedRecipes(creator: ID!): [Recipe]
+    getAllRecipeTypes: [RecipeType]
+  }
+
+  type Mutation {
     createRecipe(input: RecipeInput!): Recipe
     createUser(username: String!, email: String!, password: String!): Auth
     addToInterestedIn(recipeId: ID!, userId: ID!): Recipe
     login(email: String!, password: String!): Auth
     voteOnRecipe(recipeId: ID!, value: Int!): Recipe!
-    }
+    updateRecipe(recipeId: ID!, input: RecipeUpdateInput!): Recipe
+    deleteRecipe(recipeId: ID!): DeleteResult!
+    removeFromInterestedIn(recipeId: ID!, userId: ID!): Recipe
+  }
 `;
 
 module.exports = typeDefs;

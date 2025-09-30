@@ -24,7 +24,6 @@ const resolvers = {
     getInterestedIn: async (_, { interestedIn }) => {
       try {
         const id = new mongoose.Types.ObjectId(interestedIn);
-        // $in expects an array
         return await Recipe.find({ interestedIn: { $in: [id] } });
       } catch (error) {
         console.error('getInterestedIn error:', error);
@@ -43,18 +42,17 @@ const resolvers = {
   },
 
   Mutation: {
-    // expects args: { input: { title, description, ingredients (String), instructions (String), recipeType, imageName } }
+    // ---------------- existing mutations ----------------
     createRecipe: async (_, { input }, context) => {
       try {
-        // require auth and stamp creator from token
         if (!context.user?._id) {
           throw new AuthenticationError('You need to be logged in');
         }
 
         const title = (input?.title || '').trim();
         const description = (input?.description || '').trim();
-        const ingredients = String(input?.ingredients ?? '').trim();   // <-- keep as String
-        const instructions = String(input?.instructions ?? '').trim(); // <-- keep as String
+        const ingredients = String(input?.ingredients ?? '').trim();
+        const instructions = String(input?.instructions ?? '').trim();
 
         if (!title) throw new Error('Title is required');
         if (!ingredients) throw new Error('At least one ingredient is required');
@@ -64,16 +62,15 @@ const resolvers = {
         const doc = await Recipe.create({
           title,
           description,
-          ingredients,   // String
-          instructions,  // String
-          recipeType: input.recipeType, // Mongoose will cast string _id to ObjectId
+          ingredients,
+          instructions,
+          recipeType: input.recipeType,
           imageName: input.imageName,
-          creator: context.user._id,    // authoritative creator from JWT
+          creator: context.user._id,
         });
 
         return doc;
       } catch (error) {
-        // this will show up in `heroku logs --tail`
         console.error('createRecipe failed:', {
           message: error.message,
           name: error.name,
@@ -105,37 +102,35 @@ const resolvers = {
     },
 
     voteOnRecipe: async (_, { recipeId, value }, context) => {
-  if (!context.user?._id) {
-    throw new AuthenticationError('You need to be logged in');
-  }
-  if (![1, -1, 0].includes(value)) {
-    throw new Error('value must be 1, -1, or 0');
-  }
+      if (!context.user?._id) {
+        throw new AuthenticationError('You need to be logged in');
+      }
+      if (![1, -1, 0].includes(value)) {
+        throw new Error('value must be 1, -1, or 0');
+      }
 
-  const recipe = await Recipe.findById(recipeId);
-  if (!recipe) throw new Error('Recipe not found');
+      const recipe = await Recipe.findById(recipeId);
+      if (!recipe) throw new Error('Recipe not found');
 
-  const uid = context.user._id.toString();
-  const idx = (recipe.voters || []).findIndex(v => v.user.toString() === uid);
-  const current = idx >= 0 ? recipe.voters[idx].value : 0;
+      const uid = context.user._id.toString();
+      const idx = (recipe.voters || []).findIndex(v => v.user.toString() === uid);
+      const current = idx >= 0 ? recipe.voters[idx].value : 0;
 
-  // toggle: clicking same value turns it off (0)
-  const next = (value === current) ? 0 : value;
+      const next = (value === current) ? 0 : value;
 
-  if (idx >= 0) {
-    if (next === 0) {
-      recipe.voters.splice(idx, 1);
-    } else {
-      recipe.voters[idx].value = next;
-    }
-  } else if (next !== 0) {
-    recipe.voters.push({ user: uid, value: next });
-  }
+      if (idx >= 0) {
+        if (next === 0) {
+          recipe.voters.splice(idx, 1);
+        } else {
+          recipe.voters[idx].value = next;
+        }
+      } else if (next !== 0) {
+        recipe.voters.push({ user: uid, value: next });
+      }
 
-  await recipe.save();
-  return recipe; // field resolvers below will compute votes & myVote
-},
-
+      await recipe.save();
+      return recipe;
+    },
 
     addToInterestedIn: async (_, { recipeId, userId }) => {
       try {
@@ -159,34 +154,90 @@ const resolvers = {
       const token = signToken(user);
       return { token, user };
     },
+
+    // ---------------- NEW mutations (KEEP THEM INSIDE Mutation) ----------------
+
+    // Edit recipe (creator only)
+    updateRecipe: async (_, { recipeId, input }, context) => {
+      if (!context.user?._id) throw new AuthenticationError('You need to be logged in');
+
+      const recipe = await Recipe.findById(recipeId);
+      if (!recipe) throw new Error('Recipe not found');
+
+      const isOwner = recipe.creator?.toString() === context.user._id;
+      if (!isOwner) throw new AuthenticationError('Only the creator can edit this recipe');
+
+      const patch = {};
+      if (typeof input.title === 'string') patch.title = input.title.trim();
+      if (typeof input.description === 'string') patch.description = input.description.trim();
+      if (typeof input.ingredients === 'string') patch.ingredients = input.ingredients;
+      if (typeof input.instructions === 'string') patch.instructions = input.instructions;
+      if (typeof input.recipeType === 'string') patch.recipeType = input.recipeType;
+      if (typeof input.imageName === 'string') patch.imageName = input.imageName;
+
+      const updated = await Recipe.findByIdAndUpdate(
+        recipeId,
+        { $set: patch },
+        { new: true }
+      );
+      return updated;
+    },
+
+    // Delete recipe (creator only)
+    deleteRecipe: async (_, { recipeId }, context) => {
+      if (!context.user?._id) throw new AuthenticationError('You need to be logged in');
+
+      const recipe = await Recipe.findById(recipeId);
+      if (!recipe) throw new Error('Recipe not found');
+
+      const isOwner = recipe.creator?.toString() === context.user._id;
+      if (!isOwner) throw new AuthenticationError('Only the creator can delete this recipe');
+
+      await Recipe.findByIdAndDelete(recipeId);
+      return { _id: recipeId, success: true, message: 'Recipe deleted' };
+    },
+
+    // Remove current user from a recipe's interestedIn
+    removeFromInterestedIn: async (_, { recipeId, userId }, context) => {
+      if (!context.user?._id) throw new AuthenticationError('You need to be logged in');
+      if (String(context.user._id) !== String(userId)) {
+        throw new AuthenticationError('You can only modify your own Interested list');
+      }
+
+      const updated = await Recipe.findByIdAndUpdate(
+        recipeId,
+        { $pull: { interestedIn: userId } },
+        { new: true }
+      );
+      if (!updated) throw new Error('Recipe not found');
+
+      return updated;
+    },
   },
 
   Recipe: {
-  // existing
-  interestedIn: async (parent) => {
-    const ids = parent.interestedIn || [];
-    return await User.find({ _id: { $in: ids } });
-  },
+    interestedIn: async (parent) => {
+      const ids = parent.interestedIn || [];
+      return await User.find({ _id: { $in: ids } });
+    },
 
-  // Never returns null
-  votes(parent) {
-    const voters = parent.voters || [];
-    let up = 0, down = 0;
-    for (const v of voters) {
-      if (v.value === 1) up += 1;
-      else if (v.value === -1) down += 1;
-    }
-    return { up, down, score: up - down };
-  },
+    votes(parent) {
+      const voters = parent.voters || [];
+      let up = 0, down = 0;
+      for (const v of voters) {
+        if (v.value === 1) up += 1;
+        else if (v.value === -1) down += 1;
+      }
+      return { up, down, score: up - down };
+    },
 
-  // Never returns null (returns 0 if not logged in or no vote)
-  myVote(parent, _args, context) {
-    const uid = context.user?._id?.toString();
-    if (!uid) return 0;
-    const entry = (parent.voters || []).find(v => v.user?.toString?.() === uid);
-    return entry ? entry.value : 0;
+    myVote(parent, _args, context) {
+      const uid = context.user?._id?.toString();
+      if (!uid) return 0;
+      const entry = (parent.voters || []).find(v => v.user?.toString?.() === uid);
+      return entry ? entry.value : 0;
+    },
   },
-},
-}
+};
 
 module.exports = resolvers;
