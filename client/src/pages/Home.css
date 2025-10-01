@@ -515,4 +515,23 @@ form {
 }
 .btn-group { display: inline-flex; gap: .5rem; }
 
+/* Make vote icons neutral until the user votes */
+.btn.btn-icon {
+  background: transparent;     /* override the generic .btn background */
+  color: inherit;
+  border: none;
+}
+
+/* Optional: subtle hover only */
+.btn.btn-icon:hover {
+  background: #f3f4f6;
+}
+
+/* Highlight only when active (user clicked) */
+.btn.btn-icon.active {
+  background: #6b8dfc;  /* or keep your #eef2ff if you prefer softer */
+  color: #fff;
+}
+
+
 
