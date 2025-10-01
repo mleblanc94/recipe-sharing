@@ -56,7 +56,7 @@ const EditRecipeModal = ({ recipe, onClose, onSaved }) => {
         data: updated,
       });
     },
-    onCompleted: ({ updateRecipe: updated }) => {
+    onCompleted: ({ updateRecipe: updated }) => { 
       onSaved?.(updated);
       onClose?.();
     },
