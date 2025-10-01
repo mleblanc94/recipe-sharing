@@ -181,7 +181,7 @@ const Home = () => {
           </div>
 
           {/* Row 1: action buttons */}
-          <div className="card-actions">
+          <div className="home-card-actions">
             <div className="btn-group">
               <button
                 className="btn btn-outline"

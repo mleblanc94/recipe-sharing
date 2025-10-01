@@ -502,3 +502,17 @@ form {
 .btn-outline { background:transparent; border:1px solid #cbd5e1; color:#111827; }
 .btn:hover { filter: brightness(.95); }
 
+/* Home-only actions row (bottom of card) */
+.home-card-actions {
+  margin-top: auto;              /* push to bottom */
+  display: flex;
+  gap: .5rem;
+  padding: 0 1rem .5rem;
+  position: static;              /* ensure it's not absolute from any global rule */
+  opacity: 1;
+  pointer-events: auto;
+  background: none;
+}
+.btn-group { display: inline-flex; gap: .5rem; }
+
+
