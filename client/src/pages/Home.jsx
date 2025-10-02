@@ -27,6 +27,7 @@ const Home = () => {
 
   const profile = AuthService.loggedIn() ? AuthService.getProfile() : null;
   const userId = profile?.data?._id;
+  const username = profile?.data?.username;
   const isLoggedIn = !!userId;
 
   const navigate = useNavigate();
@@ -148,7 +149,7 @@ const Home = () => {
   return (
   <div className="home-wrap">
     <header className="home-hero">
-      <h1>Welcome to Recipe Share!</h1>
+      <h1>Welcome to Recipe Share{username ? `, ${username}!` : '!'}</h1>
       <p>
         Discover crowd-favorite recipes from the community. Click <em>More details</em> to preview any dish.
       </p>
