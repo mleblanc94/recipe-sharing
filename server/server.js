@@ -11,23 +11,19 @@ const db = require('./config/connection');
 
 const PORT = process.env.PORT || 3001;
 
-// allowlist for CORS
-const FRONTEND_ORIGINS = [
+// CORS allowlist
+const ALLOWLIST = [
   'http://localhost:5173',
   'http://localhost:3000',
-  process.env.FRONTEND_ORIGIN  // e.g. https://recipe-sharing-hub-97ef44b34b8f.herokuapp.com
+  process.env.CLIENT_URL, // e.g. https://recipe-sharing-page.netlify.app
 ].filter(Boolean);
 
 async function start() {
   const app = express();
 
+  // ✅ Let cors handle array of allowed origins (preflight-friendly)
   app.use(cors({
-    origin(origin, cb) {
-      // allow same-origin/no-origin (SSR, curl, etc.)
-      if (!origin) return cb(null, true);
-      if (FRONTEND_ORIGINS.includes(origin)) return cb(null, true);
-      return cb(new Error(`CORS blocked: ${origin}`));
-    },
+    origin: ALLOWLIST,
     credentials: true,
   }));
 
@@ -52,7 +48,7 @@ async function start() {
     app.listen(PORT, () => {
       console.log(`API Server on ${PORT}`);
       console.log(`GraphQL: /graphql`);
-      console.log(`CORS allowlist:`, FRONTEND_ORIGINS);
+      console.log(`CORS allowlist:`, ALLOWLIST);
     });
   });
 }
