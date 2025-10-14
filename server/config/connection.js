@@ -1,11 +1,26 @@
 require('dotenv').config();
-
-// Import Mongoose
 const mongoose = require('mongoose');
 
-// Connect to mongodb database 'recipesharing' - if it doesn't exist, it will create it
-const mongoDBUri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/recipesharing';
-mongoose.connect(mongoDBUri, { useNewUrlParser: true, useUnifiedTopology: true });
+const mongoDBUri =
+  process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/recipesharing';
 
-// Export Connection
-module.exports = mongoose.connection; 
+mongoose.set('strictQuery', true); // optional, quiets warnings
+
+mongoose.connect(mongoDBUri, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  serverSelectionTimeoutMS: 5000, // quick fail if URI is wrong
+});
+
+const db = mongoose.connection;
+
+db.once('open', () => {
+  const where = mongoDBUri.startsWith('mongodb+srv://') ? 'MongoDB Atlas' : 'Local MongoDB';
+  console.log(`✅ Connected to ${where}`);
+});
+
+db.on('error', (err) => {
+  console.error('❌ MongoDB connection error:', err.message);
+});
+
+module.exports = db;
